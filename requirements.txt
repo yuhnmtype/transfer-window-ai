@@ -1,0 +1,4 @@
+# Core dependencies for the data pipeline
+pandas>=2.2
+duckdb
+kagglehub
