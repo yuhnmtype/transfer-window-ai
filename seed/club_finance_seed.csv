@@ -1,0 +1,4 @@
+club_id,club_name,fiscal_year,revenue_gbp_m,wage_bill_gbp_m,profit_on_player_sales_gbp_m,plays_europe_2026_27,source_url,confidence,notes
+281,Manchester City,2024/25,694.1,408.0,95.2,CL,https://swissramble.substack.com/p/manchester-city-finances-202425,high,"3 sources agree: Swiss Ramble, PSRwatch, Game of the People. The Esk figure of 579m rejected."
+1237,Brighton & Hove Albion,2024/25,222.0,165.0,57.0,CONF_LEAGUE_PHASE,https://swissramble.substack.com/p/brighton-and-hove-albion-finances-28d,high,"Swiss Ramble and PSRwatch agree on revenue (222/221) and profit on sales (57/56.9). Wages 165 vs 159 in PSRwatch. Amortisation 82m."
+931,Fulham FC,2024/25,194.8,166.5,41.0,NO,https://swissramble.substack.com/p/fulham-finances-202425,medium,"Single source (Swiss Ramble, visible part of a paywalled article). Needs a second source."
