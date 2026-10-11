@@ -18,3 +18,15 @@ File MD5 hashes of the dataset used:
 Known limitation: the current squad is approximated (market value present and contract still running at the
 snapshot). Mean absolute difference vs the official `squad_size` is 3.55 players per club, and 6 clubs differ
 by more than 4 (Liverpool, West Ham, Newcastle, Everton, Crystal Palace, Wolves).
+
+## Finance seed
+
+- Seed: `seed/club_finance_seed.csv` (20 clubs, FY 2024/25), MD5 `af952c193c129f19bfead4cad1a78c91`
+- Sources: `seed/club_finance_sources.csv` (46 rows), MD5 `2dd224703670d2872f4aeedb3583fe32`
+- MD5 values are computed after normalising line endings to LF.
+- Load: `python src/phase2_load_seed.py`. Cross-check: `python src/phase2_check_sources.py`.
+- FY 2024/25 accounts were published between Dec 2025 and May 2026. Arsenal and Liverpool (earliest
+  year-ends, 31 May) only had third-party estimates for 2025/26 in Oct 2026, so later year-end clubs
+  are assumed not to have published FY 2025/26 either (not checked club by club).
+- `published_date` in the sources table is the date of the article, not the filing date.
+- All figures come from secondary sources and were not checked against Companies House.

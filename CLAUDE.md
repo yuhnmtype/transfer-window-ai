@@ -7,6 +7,7 @@ Portfolio project for an AI Engineering CV. Later stages use Google ADK + Gemini
 
 ## Working conventions
 - Do one step at a time and wait for the owner to confirm before the next step.
+- When a new idea comes up, ask the owner open questions before implementing it.
 - Explanations to the owner in Vietnamese. All code, code comments, commit messages
   and docs in English.
 - The owner must understand every line: explain code after writing it, keep changes small.
@@ -34,18 +35,28 @@ Portfolio project for an AI Engineering CV. Later stages use Google ADK + Gemini
 - Database `transfer_window_ai.db` is built by `src/phase1_build_db.py` and is git-ignored.
 - Tables: clubs, transfers, players, valuations, meta, club_finance (from the seed CSV).
 - The 20 clubs in the DB are the 2025/26 Premier League clubs (last_season = 2025).
+- The DB has no player wages, only transfer fees (EUR) and market values.
 - Known limitation: current squads are approximated (mean abs diff 3.55 players vs official).
 - Rejected source: Nefedov "Global Football Transfer Market 2010-2026" (mostly synthetic).
   Mention this in the README.
+- Dataset checksums and seed checksums are in `DATA_VERSION.md`.
 
-## Finance seed (`seed/club_finance_seed.csv`, references in `seed/SOURCES.md`)
-- Loaded and validated by `python src/phase2_load_seed.py`. Joins on `club_id`.
-  Primary key is (club_id, fiscal_year). Sanity range for wages/revenue is 0.30 to 1.50.
+## Finance seed
+- Files: `seed/club_finance_seed.csv` (one row per club), `seed/club_finance_sources.csv`
+  (one row per source, machine-readable), `seed/SOURCES.md` (human-readable mirror).
+- Load and validate: `python src/phase2_load_seed.py`. Cross-check against sources:
+  `python src/phase2_check_sources.py`. Rows with confidence `high` need at least two sources
+  within tolerance (0.6 or 0.5%, whichever is larger) for every metric.
+- Primary key is (club_id, fiscal_year). Sanity range for wages/revenue is 0.30 to 1.50.
 - Columns: club_id, club_name, fiscal_year, revenue_gbp_m, wage_bill_gbp_m,
-  profit_on_player_sales_gbp_m (not net player trading), uefa_next_season, in_pl_next_season,
-  source_url, confidence, notes. Column names do not hard-code a season on purpose.
-- Fiscal year is 2024/25 for all 20 clubs. FY 2025/26 accounts are expected from late 2026,
-  so a new row per club can be added later without overwriting these.
+  profit_on_player_sales_gbp_m (not net player trading), player_amortisation_gbp_m,
+  uefa_next_season, in_pl_next_season, source_url, confidence, notes. Column names do not
+  hard-code a season on purpose. Impairment is only noted in `notes`, not a column.
+- Fiscal year is 2024/25 for all 20 clubs. These accounts were published between Dec 2025 and
+  May 2026. FY 2025/26 accounts are expected from late 2026 to early 2027, so a new row per
+  club can be added later without overwriting these.
+- Baseline SCR cost for a club = published wages + published amortisation (FY 2024/25). A deal
+  advisor only adds the incremental cost of the incoming player and removes the outgoing one.
 - Method: check at least two independent sources (Swiss Ramble, PSRwatch, club releases).
   Use the more precise figure when sources agree. Confidence is the weakest field in the row.
 - All figures come from secondary sources and were not checked against Companies House.
@@ -67,11 +78,14 @@ Portfolio project for an AI Engineering CV. Later stages use Google ADK + Gemini
   proxy (international caps) is used for now.
 - Windows: summer 15 Jun to 1 Sep 2026, January 1 Jan to 1 Feb 2027.
 - Still to verify: 3-year averaging of player-trading profit in the PL Handbook, the GBE
-  points table.
+  points table, whether the 70% ratio applies to all UEFA competitions (CL, EL, ECL), the
+  5-year cap on amortisation, and a sourced EUR to GBP rate for transfer fees.
 
 ## Evaluation rules
 - No leakage: use point-in-time valuations, anonymise names in prompts, backtest only on
   complete windows (up to January 2026). Summer 2026 is incomplete.
+- Backtests must also be point-in-time for finance: use only the accounts that were public at
+  the time of the window being tested.
 - Metrics: fee MAPE, loan vs permanent classification, top-k buyer recall, constraint
   compliance rate, LLM vs baseline.
 - Fee, loan and buyer-recall metrics need no per-season finance data. Any backtest that checks
@@ -82,12 +96,16 @@ Portfolio project for an AI Engineering CV. Later stages use Google ADK + Gemini
   have `in_pl_next_season = false`: not buyers under Premier League SCR, still valid sellers.
 - Do not add the three newly promoted clubs in v1. Check later whether the dataset has enough
   data for them (v2) and document this limitation in the README.
+- The config will hold `revenue_growth_assumption = 0.0` (FY 2024/25 to 2026/27). No growth
+  adjustment in v1. The assumption must be stated in the README.
+- v1 runs one season. The schema and config are ready for more seasons.
 
 ## Status
 - Phase 1 (data foundation): done and reproducible.
-- Phase 2 (finance seed): done for all 20 clubs. Weakest rows: Fulham and West Ham (single
-  source), Leeds, Sunderland and Burnley (Championship revenue), Tottenham and Crystal Palace
-  (source disagreement).
-- Next: Phase 3, the rules engine with unit tests (SCR calculator, GBE proxy, reserve price,
-  squad needs). Then negotiation engine plus baseline, ADK LLM layer, evaluation/backtest,
-  advisor, README and demo.
+- Phase 2 (finance seed): done for all 20 clubs, with a structured sources table (46 rows).
+  Both check scripts pass. Weakest rows: Fulham and West Ham (single source), Leeds, Sunderland
+  and Burnley (Championship revenue), Tottenham and Crystal Palace (source disagreement).
+- Next: Phase 3, the rules engine with unit tests. First module is an SCR calculator
+  (adjusted revenue, 85% or 70% limit, baseline squad cost from the seed, headroom). Open
+  items are listed under "Still to verify" in Rules. Then negotiation engine plus baseline, ADK
+  LLM layer, evaluation/backtest, advisor, README and demo.

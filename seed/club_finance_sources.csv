@@ -1,0 +1,47 @@
+club_id,club_name,source_name,url,published_date,revenue_gbp_m,wages_gbp_m,profit_on_sales_gbp_m,amortisation_gbp_m,note
+281,Manchester City,Swiss Ramble,https://swissramble.substack.com/p/manchester-city-finances-202425,,694,408,95,170,
+281,Manchester City,PSRwatch,https://psrwatch.com/insights/man-city-accounts-explained-2025,,694,408,95.2,170,
+281,Manchester City,Game of the People,https://gameofthepeople.com/2025/12/19/a-minor-irritation-for-manchester-city-but-the-big-question-remains/,2025-12-19,694,408,95.2,,
+281,Manchester City,Inside World Football,https://www.insideworldfootball.com/2025/12/19/man-city-post-10m-loss-694m-revenue-clubs-invests-353m-new-players/,2025-12-19,694.1,,,,"Reports player sales income 95, not profit."
+281,Manchester City,The Esk,https://theesk.org/2026/04/14/the-analysis-series-financial-analysis-of-manchester-city-football-club-fiscal-year-2024-25-and-post-balance-sheet-developments-through-april-2026/,2026-04-14,694.1,579.0,95.2,,"Wages 579.0 rejected: probably a broader staff-cost aggregate."
+1237,Brighton & Hove Albion,Swiss Ramble,https://swissramble.substack.com/p/brighton-and-hove-albion-finances-28d,,222,165,57,82,
+1237,Brighton & Hove Albion,PSRwatch,https://psrwatch.com/insights/brighton-accounts-explained-2025,,221,159,56.9,81.8,
+1237,Brighton & Hove Albion,Game of the People,https://gameofthepeople.com/2026/01/16/brightons-halo-slips-just-a-little/,2026-01-16,242.0,165,57,,"Revenue derived (includes 20 property income). Rejected."
+1237,Brighton & Hove Albion,Inside World Football,https://www.insideworldfootball.com/2026/01/12/brighton-report-54m-loss-set-course-europe-first-major-trophy/,2026-01-12,247.0,,,,"Revenue not confirmed elsewhere. Rejected. Player trading -25."
+1237,Brighton & Hove Albion,Club release,https://www.brightonandhovealbion.com/media-article/club-news-annual-accounts-published-2024-25-season-january-2026,2026-01,,,,,"Operating loss 54.4, player trading -25, amortisation up 39.8."
+931,Fulham FC,Swiss Ramble,https://swissramble.substack.com/p/fulham-finances-202425,,194.8,166.5,41.0,61.5,"Visible part of a paywalled article."
+11,Arsenal FC,Swiss Ramble,https://swissramble.substack.com/p/arsenal-finances-202425,,690,347,81,172,"Excludes a separate 15 impairment."
+11,Arsenal FC,PSRwatch,https://psrwatch.com/insights/arsenal-accounts-explained-2025,,691,347,81.2,172,
+31,Liverpool FC,Swiss Ramble,https://swissramble.substack.com/p/liverpool-finances-202425,,703,428,53,117,
+31,Liverpool FC,PSRwatch,https://psrwatch.com/insights/liverpool-accounts-explained-2025,,703,428,53.3,117,
+1148,Brentford FC,Swiss Ramble,https://swissramble.substack.com/p/brentford-finances-202425,,173.1,130.8,27.2,47.8,
+1148,Brentford FC,PSRwatch,https://psrwatch.com/insights/brentford-accounts-explained-2025,,173,131,27.2,47.6,
+631,Chelsea FC,Swiss Ramble,https://swissramble.substack.com/p/chelsea-finances-202425,,491,359,58,212,
+631,Chelsea FC,PSRwatch,https://psrwatch.com/insights/chelsea-accounts-explained-2025,,491,359,57.9,212,
+985,Manchester United,Swiss Ramble,https://swissramble.substack.com/p/manchester-united-finances-202425,,667,313,49,193,
+985,Manchester United,United in Focus,https://www.unitedinfocus.com/news/man-united-break-667m-record-as-official-paperwork-released-psr-position-now-clear/,,666.5,313,,196,
+148,Tottenham Hotspur,PSRwatch,https://psrwatch.com/insights/tottenham-accounts-explained-2025,,565,256,52.6,142,
+148,Tottenham Hotspur,The Esk,https://theesk.org/2026/04/17/the-analysis-series-analysis-of-tottenham-hotspur-football-athletic-co-ltd-and-tottenham-hotspur-limited-strategic-review-of-the-2024-25-fiscal-period/,2026-04-17,565.3,248.3,52.4,146.6,"Wages are company-level (group about 402). Amortisation includes impairment."
+148,Tottenham Hotspur,Inside World Football,https://www.insideworldfootball.com/2026/04/02/spurs-finances-match-pitch-failings-loses-jump-51m/,2026-04-02,565.3,,,,
+762,Newcastle United,Swiss Ramble,https://swissramble.substack.com/p/newcastle-united-finances-202425,,335,243,20,100,
+762,Newcastle United,PSRwatch,https://psrwatch.com/insights/newcastle-accounts-explained-2025,,335,243,19.9,99.9,
+405,Aston Villa,Swiss Ramble,https://swissramble.substack.com/p/aston-villa-finances-202425,,378,273,52,100,"Excludes a 6.5 impairment."
+405,Aston Villa,PSRwatch,https://psrwatch.com/insights/aston-villa-accounts-explained-2025,,378,273,52,106,"Amortisation probably includes impairment."
+29,Everton FC,Swiss Ramble,https://swissramble.substack.com/p/everton-finances-202425,,196.7,152.1,31.3,50.9,
+29,Everton FC,PSRwatch,https://psrwatch.com/insights/everton-accounts-explained-2025,,197,152,31.3,50.9,
+873,Crystal Palace,Swiss Ramble,https://swissramble.substack.com/p/crystal-palace-finances-202425,,196.6,148.3,66.1,54.1,
+873,Crystal Palace,PSRwatch,https://psrwatch.com/insights/crystal-palace-accounts-explained-2025,,195,145,66.1,54,
+703,Nottingham Forest,Swiss Ramble,https://swissramble.substack.com/p/nottingham-forest-finances-202425,,222,167,7,69,
+703,Nottingham Forest,Game of the People,https://gameofthepeople.com/2026/03/29/nottingham-forest-record-revenues-and-a-busy-revolving-door/,2026-03-29,222,168,7,,
+703,Nottingham Forest,The Esk,https://theesk.org/2026/04/17/analysis-series-analysis-of-the-financial-operational-framework-of-nottingham-forest-football-club-limited-2024-2026/,2026-04-17,221.7,166.7,,68.9,"Total staff costs about 241 not used."
+989,AFC Bournemouth,Swiss Ramble,https://swissramble.substack.com/p/bournemouth-finances-202425,,182,158,91,69,
+989,AFC Bournemouth,PSRwatch,https://psrwatch.com/insights/bournemouth-accounts-explained-2025,,182,158,91,69.2,
+399,Leeds United,PSRwatch,https://psrwatch.com/insights/leeds-accounts-explained-2025,,137,103,24.8,46.4,
+399,Leeds United,Yorkshire Evening Post,https://www.yorkshireeveningpost.co.uk/sport/football/leeds-united/leeds-united-accounts-revenue-loss-psr-6547861,,137,107.7,,,
+289,Sunderland AFC,Swiss Ramble,https://swissramble.substack.com/p/sunderland-finances-202425,,40.3,53.8,45.9,10.4,"Wages include a promotion bonus."
+289,Sunderland AFC,PSRwatch,https://psrwatch.com/insights/sunderland-accounts-explained-2025,,39.4,52.9,45.8,10.4,
+1132,Burnley FC,Swiss Ramble,https://swissramble.substack.com/p/burnley-finances-202425,,71.7,82.3,59.0,36.7,
+1132,Burnley FC,The Esk,https://theesk.org/2026/05/07/the-analysis-series-burnley-fc-holdings-limited-annual-report-and-financial-statements-2024-25/,2026-05-07,71.7,82.3,59.0,36.7,
+379,West Ham United,The Esk,https://theesk.org/2026/04/22/the-analysis-series-analysis-of-wh-holding-limited-financial-distillation-ownership-transition-and-structural-viability-of-west-ham-united-fy-2024-2025/,2026-04-22,227.6,175.9,20.0,99.4,"Staff costs scope unclear."
+543,Wolverhampton Wanderers,Swiss Ramble,https://swissramble.substack.com/p/wolverhampton-wanderers-finances-04e,,172,163,117,75,"13-month period."
+543,Wolverhampton Wanderers,The Esk,https://theesk.org/2026/05/08/the-analysis-series-wolverhampton-wanderers-annual-report-and-accounts-2024-25/,2026-05-08,172.0,162.1,117.0,75.4,"13-month period."

@@ -9,7 +9,7 @@ DB_PATH = "transfer_window_ai.db"
 
 EXPECTED_COLUMNS = [
     "club_id", "club_name", "fiscal_year", "revenue_gbp_m",
-    "wage_bill_gbp_m", "profit_on_player_sales_gbp_m",
+    "wage_bill_gbp_m", "profit_on_player_sales_gbp_m", "player_amortisation_gbp_m",
     "uefa_next_season", "in_pl_next_season",
     "source_url", "confidence", "notes",
 ]
@@ -32,8 +32,8 @@ def validate(seed: pd.DataFrame, db_clubs: pd.DataFrame) -> list:
 
     # Null checks
     required = ["club_id", "revenue_gbp_m", "wage_bill_gbp_m",
-                "profit_on_player_sales_gbp_m", "uefa_next_season",
-                "in_pl_next_season", "source_url", "confidence"]
+                "profit_on_player_sales_gbp_m", "player_amortisation_gbp_m",
+                "uefa_next_season", "in_pl_next_season", "source_url", "confidence"]
     for col in required:
         if seed[col].isna().any():
             errors.append(f"Null values in {col}")
@@ -49,6 +49,8 @@ def validate(seed: pd.DataFrame, db_clubs: pd.DataFrame) -> list:
         errors.append(f"Unknown confidence values: {bad_conf}")
     if (seed["revenue_gbp_m"] <= 0).any() or (seed["wage_bill_gbp_m"] <= 0).any():
         errors.append("Revenue and wage bill must be positive")
+    if (seed["player_amortisation_gbp_m"] < 0).any():
+        errors.append("Player amortisation cannot be negative")
 
     # Sanity: wage ratio should be plausible (30%-150%). Championship clubs can exceed 100%.
     ratio = seed["wage_bill_gbp_m"] / seed["revenue_gbp_m"]
@@ -86,8 +88,8 @@ def main():
     con.close()
     print(f"Loaded {len(seed)} rows into club_finance")
     print(seed[["club_name", "revenue_gbp_m", "wage_bill_gbp_m",
-                "profit_on_player_sales_gbp_m", "uefa_next_season",
-                "in_pl_next_season", "confidence"]].to_string(index=False))
+                "profit_on_player_sales_gbp_m", "player_amortisation_gbp_m",
+                "uefa_next_season", "in_pl_next_season", "confidence"]].to_string(index=False))
 
 
 if __name__ == "__main__":
