@@ -107,3 +107,32 @@ not the filing date of the accounts, and "-" means unknown.
   [This Is Anfield](https://www.thisisanfield.com/2026/02/liverpool-fc-financial-results-accounts-2025-record-revenue/)).
 - Financial years end 30 June, except Arsenal, Liverpool and West Ham (31 May) and Burnley
   and Sunderland (31 July). Wolves reports a 13-month period.
+
+## Wage model research (2026-10-11)
+
+Goal: estimate per-player wages by allocating a club's wage pool across its squad by market
+value. The result is a labelled assumption with confidence `low`, never a fact.
+
+These pages were read through a summarising tool, and the theses from their abstract pages
+only. Every figure below must be re-checked against the page before it is used.
+
+| Source | Finding | Confidence |
+|---|---|---|
+| [Capology explainer (Sports Reference)](https://www.sports-reference.com/blog/2022/08/capology-wage-data-explainer/) | Wages are either "Verified" or "Unverified estimation". Gross, base salary only, bonuses excluded. Sources often disagree. | medium (methodology description) |
+| [Planet Football](https://www.planetfootball.com/premier-league/every-premier-league-club-highest-paid-player-in-2025-26-xhaka-joins-haaland-on-elite-list), [Football365](https://www.football365.com/news/every-premier-league-club-highest-earner-beat-paid-player) (published 18 Aug 2026), [GiveMeSport](https://www.givemesport.com/every-premier-league-club-highest-paid-player/) (2023-24 data, outdated, do not use) | Top-earner lists are Capology-derived, so not independent. They disagree for several clubs: checked 6 clubs, top-earner figures differ by about 7% to 41%, partly because they name different players. | low |
+| [Che 2022, Salford PhD thesis, "Player valuation in thin markets"](https://salford-repository.worktribe.com/output/1323435) | For top-10% market-value players in the big-5 leagues, mature players earn 112% more than young players and mid-age players 64% more. Performance matters little for wages. Abstract page only. Not used as a parameter yet. | low |
+| [Kouh Bor 2024, University of Victoria master's project](https://dspace.library.uvic.ca/items/ddc4fc58-9aa4-46e8-bc7f-dbc670bed842) | ML on 3,522 EPL player-seasons. Age, position, nationality and club revenue matter. No coefficients on the page. | low |
+| [Frenger et al. 2019](https://econpapers.repec.org/RePEc:zbw:eiswps:30) | Bundesliga market value depends more than 50% on the club's preseason TV money. Implication: allocate within a club, never compare market values across clubs. | low-medium |
+
+Not found:
+- Any usable source for the players' share of a club's wage bill, so `wage_scope_factor`
+  stays 1.0 and is used for sensitivity only.
+- Any independent per-player wage ground truth. The Sporting Intelligence survey page found
+  is from 2010 ([link](https://sportingintelligence.com/?p=3664)) and is unusable.
+
+Planned design (not yet implemented):
+- `wage_i = pool * MV_i^alpha / sum_j(MV_j^alpha)` within one club, reported as a range over
+  `alpha`, not a single number.
+- Acceptance criteria, the fit/test split and the reference file are committed BEFORE the
+  model is run.
+- An age multiplier is only an optional later ablation.
