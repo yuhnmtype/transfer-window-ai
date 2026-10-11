@@ -108,6 +108,14 @@ Never present these as official figures.
 - Impairment is NOT in the seed (notes only, e.g. Arsenal ~15, Villa ~6.5). Baseline treats
   it as 0. Known understatement of squad costs.
 - FY2025/26 accounts are not published yet. Backtests must be point-in-time.
+- Public wage lists are Capology-derived articles, not independent sources, and they
+  disagree with each other and contain errors (checked 6 clubs on 2026-10-11: top-earner
+  figures differed by about 7% to 41%, partly because they name different players). They
+  support only a coarse plausibility check, never ground truth. (confidence: low)
+  Sources: https://www.planetfootball.com/premier-league/every-premier-league-club-highest-paid-player-in-2025-26-xhaka-joins-haaland-on-elite-list,
+  https://www.football365.com/news/every-premier-league-club-highest-earner-beat-paid-player,
+  https://www.givemesport.com/every-premier-league-club-highest-paid-player/ (2023-24 data,
+  outdated).
 
 ### FX
 - Constant 0.86 GBP per EUR (confidence: medium).
@@ -154,7 +162,14 @@ Never present these as official figures.
   and Burnley (Championship revenue), Tottenham and Crystal Palace (source disagreement).
 - Rules verification: done at secondary-source level (see Rules). Open items listed under
   "Still to verify".
-- Next: Phase 3, the rules engine with unit tests. First module is an SCR calculator
-  (adjusted revenue, 85% or 70% limit with red 115% or 100%, baseline squad cost from the
-  seed, headroom). Then negotiation engine plus baseline, ADK LLM layer, evaluation/backtest,
-  advisor, README and demo.
+- Phase 3 step 1 (SCR calculator): done. `config/rules_2026_27.toml`, `src/scr.py`,
+  `tests/test_scr.py` (50 tests passing), commit 8d9879b.
+- SCR calculator limitations: permanent deals only (loan raises NotImplementedError);
+  deal_delta ignores profit on the outgoing player's sale; impairment counted as 0;
+  wage_bill is club-wide, so squad cost is overstated; incoming and outgoing wages are
+  user inputs (the DB has no wages); player_sales_avg_years > 1 not implemented.
+- Next, in this order (owner may reorder): (a) player wage estimation model, research
+  first, labelled as an assumption with low confidence; (b) outgoing-player amortisation
+  helper (approximation); (c) loan support in deal_delta; (d) GBE module (points table
+  still unverified). Then negotiation engine plus baseline, ADK LLM layer,
+  evaluation/backtest, advisor, README and demo.
