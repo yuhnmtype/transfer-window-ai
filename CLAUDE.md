@@ -144,6 +144,8 @@ Never present these as official figures.
 - Config has `wage_scope_factor` (default 1.0, sensitivity only) and
   `player_sales_avg_years` (default 1).
 - FX fixed at 0.86 GBP/EUR (medium confidence).
+- Incoming agent fees are spread with the transfer fee over min(contract years, cap).
+  Unsourced assumption.
 
 ## Status
 - Phase 1 (data foundation): done and reproducible.

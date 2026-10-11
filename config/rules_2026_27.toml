@@ -1,0 +1,42 @@
+# Premier League rules for one season, read by src/scr.py (load_config validates every value).
+# All rule values come from secondary sources (premierleague.com explainer, Farrer,
+# The Esk 16 May 2026). The binding Handbook Section E text has NOT been checked.
+# Never present these values as official figures.
+
+season = "2026/27"
+
+[data_vintage]
+# Accounts used to estimate this season. FY 2025/26 accounts are not published yet.
+# Source: owner decision (CLAUDE.md "Finance seed"); confidence: n/a (choice, not a fact).
+finance_fiscal_year = "2024/25"
+
+[scr.standard]
+# Squad cost / adjusted revenue thresholds for clubs not in a UEFA competition.
+green = 0.85  # source: PL explainer, Farrer, The Esk (secondary); confidence: medium
+red = 1.15    # source: same; confidence: medium
+
+[scr.uefa]
+# Thresholds for clubs in ANY UEFA competition next season.
+green = 0.70  # source: PL explainer, Farrer, The Esk (secondary); confidence: medium
+red = 1.00    # source: same; confidence: medium (NOT 1.15)
+# uefa_next_season values that count as "in a UEFA competition".
+# Source: owner decision; confidence: unverified against the Handbook.
+competitions = ["CL", "EL", "CONF_LEAGUE_PHASE", "CONF_PLAYOFF"]
+# uefa_next_season value for a club with no UEFA competition (seed convention).
+no_competition = "NO"
+
+[amortisation]
+cap_years = 5  # source: The Esk only; confidence: low-medium; needs a second source
+
+[fx]
+gbp_per_eur = 0.86  # source: Bank of England spot via poundsterlinglive; confidence: medium; fixed rate
+
+[assumptions]
+revenue_growth_assumption = 0.0  # source: owner decision, no growth FY 2024/25 -> 2026/27
+wage_scope_factor = 1.0          # source: owner decision; sensitivity only, never a fact
+player_sales_avg_years = 1       # source: no averaging found in any source; values > 1 not implemented
+
+[sanction]
+# Red-threshold breach. Values only; no deduction function until the rounding rule is sourced.
+red_breach_base_points = 6         # source: secondary (see header); confidence: medium
+red_breach_gbp_m_per_point = 6.5   # 1 extra point per GBP 6.5m over; confidence: medium
