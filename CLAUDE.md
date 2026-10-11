@@ -173,3 +173,6 @@ Never present these as official figures.
   helper (approximation); (c) loan support in deal_delta; (d) GBE module (points table
   still unverified). Then negotiation engine plus baseline, ADK LLM layer,
   evaluation/backtest, advisor, README and demo.
+- Wage model pre-registration: criteria and split in `docs/wage_model_criteria.md`,
+  reference in `seed/wage_reference.csv` (check: `python src/phase3_check_wage_reference.py`).
+  Committed before any model code; criteria change only by a new commit with a reason.
