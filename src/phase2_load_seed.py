@@ -12,9 +12,12 @@ EXPECTED_COLUMNS = [
     "wage_bill_gbp_m", "profit_on_player_sales_gbp_m", "player_amortisation_gbp_m",
     "uefa_next_season", "in_pl_next_season",
     "source_url", "confidence", "notes",
+    "revenue_basis", "period_months",
 ]
 ALLOWED_UEFA = {"CL", "EL", "CONF_LEAGUE_PHASE", "CONF_PLAYOFF", "NO"}
 ALLOWED_CONFIDENCE = {"high", "medium", "low"}
+ALLOWED_REVENUE_BASIS = {"PL", "CHAMPIONSHIP"}
+ALLOWED_PERIOD_MONTHS = {12, 13}
 
 
 def validate(seed: pd.DataFrame, db_clubs: pd.DataFrame) -> list:
@@ -33,7 +36,8 @@ def validate(seed: pd.DataFrame, db_clubs: pd.DataFrame) -> list:
     # Null checks
     required = ["club_id", "revenue_gbp_m", "wage_bill_gbp_m",
                 "profit_on_player_sales_gbp_m", "player_amortisation_gbp_m",
-                "uefa_next_season", "in_pl_next_season", "source_url", "confidence"]
+                "uefa_next_season", "in_pl_next_season", "source_url", "confidence",
+                "revenue_basis", "period_months"]
     for col in required:
         if seed[col].isna().any():
             errors.append(f"Null values in {col}")
@@ -47,6 +51,13 @@ def validate(seed: pd.DataFrame, db_clubs: pd.DataFrame) -> list:
     bad_conf = set(seed["confidence"]) - ALLOWED_CONFIDENCE
     if bad_conf:
         errors.append(f"Unknown confidence values: {bad_conf}")
+    bad_basis = set(seed["revenue_basis"]) - ALLOWED_REVENUE_BASIS
+    if bad_basis:
+        errors.append(f"Unknown revenue_basis values: {bad_basis}")
+    if not pd.api.types.is_integer_dtype(seed["period_months"]):
+        errors.append("period_months must contain only whole numbers")
+    elif set(seed["period_months"]) - ALLOWED_PERIOD_MONTHS:
+        errors.append(f"period_months must be in {ALLOWED_PERIOD_MONTHS}")
     if (seed["revenue_gbp_m"] <= 0).any() or (seed["wage_bill_gbp_m"] <= 0).any():
         errors.append("Revenue and wage bill must be positive")
     if (seed["player_amortisation_gbp_m"] < 0).any():
@@ -89,7 +100,8 @@ def main():
     print(f"Loaded {len(seed)} rows into club_finance")
     print(seed[["club_name", "revenue_gbp_m", "wage_bill_gbp_m",
                 "profit_on_player_sales_gbp_m", "player_amortisation_gbp_m",
-                "uefa_next_season", "in_pl_next_season", "confidence"]].to_string(index=False))
+                "uefa_next_season", "in_pl_next_season", "confidence",
+                "revenue_basis", "period_months"]].to_string(index=False))
 
 
 if __name__ == "__main__":

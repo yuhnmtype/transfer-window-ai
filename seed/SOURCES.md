@@ -85,13 +85,15 @@ not the filing date of the accounts, and "-" means unknown.
 - **Leeds, Sunderland, Burnley:** their FY 2024/25 was played in the Championship, so
   revenue is not representative of Premier League income. Confidence is `low` for this
   reason. The rules engine will need a separate Premier League revenue estimate for them.
+  Flagged in the seed as `revenue_basis = CHAMPIONSHIP`.
 - **Leeds wages:** 103 (PSR) is used. The Yorkshire Evening Post reports 107.7. Unresolved.
 - **Sunderland:** Swiss Ramble and PSR differ by about 0.9 on revenue and wages. Swiss Ramble
   is used. Financial year ends 31 July 2025.
 - **West Ham:** single source (The Esk, group accounts to 31 May 2025). It is unclear whether
   staff costs include non-football staff. Needs a second source.
 - **Wolves:** the accounts cover 13 months to 30 June 2025 because the year-end moved from
-  May to June, so figures are slightly inflated against a 12-month year.
+  May to June, so figures are slightly inflated against a 12-month year. Flagged in the seed
+  as `period_months = 13`.
 
 ## Other facts used
 

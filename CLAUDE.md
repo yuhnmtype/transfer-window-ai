@@ -50,7 +50,8 @@ Portfolio project for an AI Engineering CV. Later stages use Google ADK + Gemini
 - Primary key is (club_id, fiscal_year). Sanity range for wages/revenue is 0.30 to 1.50.
 - Columns: club_id, club_name, fiscal_year, revenue_gbp_m, wage_bill_gbp_m,
   profit_on_player_sales_gbp_m (not net player trading), player_amortisation_gbp_m,
-  uefa_next_season, in_pl_next_season, source_url, confidence, notes. Column names do not
+  uefa_next_season, in_pl_next_season, source_url, confidence, notes, revenue_basis
+  (PL or CHAMPIONSHIP), period_months (12, or 13 for Wolves). Column names do not
   hard-code a season on purpose. Impairment is only noted in `notes`, not a column.
 - Fiscal year is 2024/25 for all 20 clubs. These accounts were published between Dec 2025 and
   May 2026. FY 2025/26 accounts are expected from late 2026 to early 2027, so a new row per
