@@ -10,9 +10,10 @@ DB_PATH = "transfer_window_ai.db"
 EXPECTED_COLUMNS = [
     "club_id", "club_name", "fiscal_year", "revenue_gbp_m",
     "wage_bill_gbp_m", "profit_on_player_sales_gbp_m",
-    "plays_europe_2026_27", "source_url", "confidence", "notes",
+    "uefa_next_season", "in_pl_next_season",
+    "source_url", "confidence", "notes",
 ]
-ALLOWED_EUROPE = {"CL", "EL", "CONF_LEAGUE_PHASE", "CONF_PLAYOFF", "NO"}
+ALLOWED_UEFA = {"CL", "EL", "CONF_LEAGUE_PHASE", "CONF_PLAYOFF", "NO"}
 ALLOWED_CONFIDENCE = {"high", "medium", "low"}
 
 
@@ -25,19 +26,24 @@ def validate(seed: pd.DataFrame, db_clubs: pd.DataFrame) -> list:
         errors.append(f"Columns mismatch: {list(seed.columns)}")
         return errors
 
-    # Uniqueness and nulls
-    if seed["club_id"].duplicated().any():
-        errors.append("Duplicate club_id in seed")
+    # Primary key is (club_id, fiscal_year)
+    if seed.duplicated(subset=["club_id", "fiscal_year"]).any():
+        errors.append("Duplicate (club_id, fiscal_year) in seed")
+
+    # Null checks
     required = ["club_id", "revenue_gbp_m", "wage_bill_gbp_m",
-                "profit_on_player_sales_gbp_m", "source_url", "confidence"]
+                "profit_on_player_sales_gbp_m", "uefa_next_season",
+                "in_pl_next_season", "source_url", "confidence"]
     for col in required:
         if seed[col].isna().any():
             errors.append(f"Null values in {col}")
 
     # Domain checks
-    bad_europe = set(seed["plays_europe_2026_27"]) - ALLOWED_EUROPE
-    if bad_europe:
-        errors.append(f"Unknown europe flags: {bad_europe}")
+    bad_uefa = set(seed["uefa_next_season"]) - ALLOWED_UEFA
+    if bad_uefa:
+        errors.append(f"Unknown UEFA values: {bad_uefa}")
+    if seed["in_pl_next_season"].dtype != bool:
+        errors.append("in_pl_next_season must contain only true/false")
     bad_conf = set(seed["confidence"]) - ALLOWED_CONFIDENCE
     if bad_conf:
         errors.append(f"Unknown confidence values: {bad_conf}")
@@ -80,7 +86,8 @@ def main():
     con.close()
     print(f"Loaded {len(seed)} rows into club_finance")
     print(seed[["club_name", "revenue_gbp_m", "wage_bill_gbp_m",
-                "profit_on_player_sales_gbp_m", "confidence"]].to_string(index=False))
+                "profit_on_player_sales_gbp_m", "uefa_next_season",
+                "in_pl_next_season", "confidence"]].to_string(index=False))
 
 
 if __name__ == "__main__":
