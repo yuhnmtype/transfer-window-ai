@@ -50,10 +50,10 @@ def validate(seed: pd.DataFrame, db_clubs: pd.DataFrame) -> list:
     if (seed["revenue_gbp_m"] <= 0).any() or (seed["wage_bill_gbp_m"] <= 0).any():
         errors.append("Revenue and wage bill must be positive")
 
-    # Sanity: wage ratio should be plausible for a PL club (30%-110%)
+    # Sanity: wage ratio should be plausible (30%-150%). Championship clubs can exceed 100%.
     ratio = seed["wage_bill_gbp_m"] / seed["revenue_gbp_m"]
     for cid, r in zip(seed["club_id"], ratio):
-        if not 0.30 <= r <= 1.10:
+        if not 0.30 <= r <= 1.50:
             errors.append(f"club_id {cid}: wage/revenue ratio {r:.2f} looks implausible")
 
     # Integrity: every club_id and club_name must match the clubs table

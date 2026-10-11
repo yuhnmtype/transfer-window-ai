@@ -49,6 +49,15 @@ Abbreviations: SR = Swiss Ramble, PSR = PSRwatch, GotP = Game of the People.
 | Nottingham Forest | [The Esk](https://theesk.org/2026/04/17/analysis-series-analysis-of-the-financial-operational-framework-of-nottingham-forest-football-club-limited-2024-2026/) | 221.7 | 166.7 (total staff costs about 241, not used) | n/s |
 | Bournemouth | [SR](https://swissramble.substack.com/p/bournemouth-finances-202425) | 182 | 158 | 91 |
 | Bournemouth | [PSR](https://psrwatch.com/insights/bournemouth-accounts-explained-2025) | 182 | 158 | 91 |
+| Leeds | [PSR](https://psrwatch.com/insights/leeds-accounts-explained-2025) | 137 | 103 | 24.8 |
+| Leeds | [Yorkshire Evening Post](https://www.yorkshireeveningpost.co.uk/sport/football/leeds-united/leeds-united-accounts-revenue-loss-psr-6547861) | 137 | 107.7 | n/s |
+| Sunderland | [SR](https://swissramble.substack.com/p/sunderland-finances-202425) | 40.3 | 53.8 (includes promotion bonus) | 45.9 |
+| Sunderland | [PSR](https://psrwatch.com/insights/sunderland-accounts-explained-2025) | 39.4 | 52.9 | 45.8 |
+| Burnley | [SR](https://swissramble.substack.com/p/burnley-finances-202425) | 71.7 | 82.3 | 59.0 |
+| Burnley | [The Esk](https://theesk.org/2026/05/07/the-analysis-series-burnley-fc-holdings-limited-annual-report-and-financial-statements-2024-25/) | 71.7 | 82.3 | 59.0 |
+| West Ham | [The Esk](https://theesk.org/2026/04/22/the-analysis-series-analysis-of-wh-holding-limited-financial-distillation-ownership-transition-and-structural-viability-of-west-ham-united-fy-2024-2025/) | 227.6 | 175.9 (scope unclear) | 20.0 |
+| Wolves | [SR](https://swissramble.substack.com/p/wolverhampton-wanderers-finances-04e) | 172 | 163 | 117 |
+| Wolves | [The Esk](https://theesk.org/2026/05/08/the-analysis-series-wolverhampton-wanderers-annual-report-and-accounts-2024-25/) | 172.0 | 162.1 | 117.0 |
 
 ## Rejected or unresolved values
 
@@ -63,6 +72,16 @@ Abbreviations: SR = Swiss Ramble, PSR = PSRwatch, GotP = Game of the People.
   because it gives one decimal. Definitions may differ.
 - **Fulham:** single source, partly paywalled. Needs a second source.
 - **Man Utd profit on sales:** single source (SR).
+- **Leeds, Sunderland, Burnley:** their FY 2024/25 was played in the Championship, so
+  revenue is not representative of Premier League income. Confidence is `low` for this
+  reason. The rules engine will need a separate Premier League revenue estimate for them.
+- **Leeds wages:** 103 (PSR) is used. The Yorkshire Evening Post reports 107.7. Unresolved.
+- **Sunderland:** Swiss Ramble and PSR differ by about 0.9 on revenue and wages. Swiss Ramble
+  is used. Financial year ends 31 July 2025.
+- **West Ham:** single source (The Esk, group accounts to 31 May 2025). It is unclear whether
+  staff costs include non-football staff. Needs a second source.
+- **Wolves:** the accounts cover 13 months to 30 June 2025 because the year-end moved from
+  May to June, so figures are slightly inflated against a 12-month year.
 
 ## Other facts used
 
@@ -71,4 +90,5 @@ Abbreviations: SR = Swiss Ramble, PSR = PSRwatch, GotP = Game of the People.
   (NBC has some points totals that do not match its win/draw/loss records, so it was used only
   for relegation and qualification).
 - Brighton Conference League league phase: [Express & Star](https://www.expressandstar.com/uk-sports/brighton-cruise-into-conference-league-after-win-over-tromso-8946632).
-- Financial years end 30 June, except Arsenal and Liverpool (31 May).
+- Financial years end 30 June, except Arsenal, Liverpool and West Ham (31 May) and Burnley
+  and Sunderland (31 July). Wolves reports a 13-month period.
