@@ -181,11 +181,14 @@ Never present these as official figures.
 - Hypothesis (not a finding): the club-wide wage pool is too large relative to player wages.
   Testing it needs new reference data and a new tag (wage-criteria-v2), not a re-run on the
   17 clubs already seen.
-- Next, in this order (owner may reorder): (a) vertical slice: rule-based advisor for one
-  permanent deal with user-supplied wages; (b) outgoing-player amortisation helper;
-  (c) negotiation engine plus baseline; (d) ADK layer; (e) evaluation; (f) README and demo.
+- Step (a) done: rule-based one-deal advisor (commit 18cde75). `config/advisor.toml`,
+  `src/advisor.py`, `src/advise_cli.py`; 129 tests passing.
+- Next, in this order (owner may reorder): README (with LICENSE); (b) outgoing-player
+  amortisation helper; (c) negotiation engine plus baseline; (d) ADK layer; (e) evaluation;
+  (f) demo and README update.
 - Backlog (not scheduled): loan support in deal_delta; GBE module (points table
   unverified); age multiplier for wages (only as an ablation); second sources for Fulham
   and West Ham; Companies House spot-check (Man City, Tottenham, Brighton); second source
   for the 5-year amortisation cap; Handbook Section E verification; promoted clubs (v2);
-  FY 2025/26 accounts when published; wage-criteria-v2 with new reference data.
+  FY 2025/26 accounts when published; wage-criteria-v2 with new reference data; mark Leeds
+  and Sunderland as "Championship revenue" in --list-clubs output.
