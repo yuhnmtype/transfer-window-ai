@@ -1,0 +1,8 @@
+# Advisor settings, read by src/advisor.py (load_advisor_config validates every value).
+# These are application choices, not football rules, and they do not depend on the season,
+# so they are kept out of rules_<season>.toml.
+
+[sensitivity]
+# Relative changes applied to the user-supplied incoming wage. Each must be > -1.
+# Source: owner decision; not a fact about wages.
+wage_offsets = [-0.2, 0.0, 0.2]
