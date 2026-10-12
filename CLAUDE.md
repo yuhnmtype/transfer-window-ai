@@ -168,11 +168,24 @@ Never present these as official figures.
   deal_delta ignores profit on the outgoing player's sale; impairment counted as 0;
   wage_bill is club-wide, so squad cost is overstated; incoming and outgoing wages are
   user inputs (the DB has no wages); player_sales_avg_years > 1 not implemented.
-- Next, in this order (owner may reorder): (a) player wage estimation model, research
-  first, labelled as an assumption with low confidence; (b) outgoing-player amortisation
-  helper (approximation); (c) loan support in deal_delta; (d) GBE module (points table
-  still unverified). Then negotiation engine plus baseline, ADK LLM layer,
-  evaluation/backtest, advisor, README and demo.
 - Wage model pre-registration: criteria and split in `docs/wage_model_criteria.md`,
   reference in `seed/wage_reference.csv` (check: `python src/phase3_check_wage_reference.py`).
   Committed before any model code; criteria change only by a new commit with a reason.
+- Wage model result: NOT ACCEPTED. The registered evaluation (tag wage-criteria-v1, code
+  commit c94380e, `results/wage_model_eval.json`) was run once. Alpha was selected at the
+  lower grid boundary (0.30); test passes 3/8 vs equal split 5/8; conditions A and B both
+  failed. The README must report this failure.
+- Per the registered fallback, the advisor does not use the wage model by default. Wages are
+  user-supplied inputs for a single deal. In negotiation simulations they are explicit,
+  labelled scenarios (low/mid/high) reported as sensitivity analysis, never as fact.
+- Hypothesis (not a finding): the club-wide wage pool is too large relative to player wages.
+  Testing it needs new reference data and a new tag (wage-criteria-v2), not a re-run on the
+  17 clubs already seen.
+- Next, in this order (owner may reorder): (a) vertical slice: rule-based advisor for one
+  permanent deal with user-supplied wages; (b) outgoing-player amortisation helper;
+  (c) negotiation engine plus baseline; (d) ADK layer; (e) evaluation; (f) README and demo.
+- Backlog (not scheduled): loan support in deal_delta; GBE module (points table
+  unverified); age multiplier for wages (only as an ablation); second sources for Fulham
+  and West Ham; Companies House spot-check (Man City, Tottenham, Brighton); second source
+  for the 5-year amortisation cap; Handbook Section E verification; promoted clubs (v2);
+  FY 2025/26 accounts when published; wage-criteria-v2 with new reference data.
