@@ -1,0 +1,494 @@
+{
+  "config": {
+    "criteria_tag": "wage-criteria-v1",
+    "alpha_grid": [
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      1.0,
+      1.05,
+      1.1,
+      1.15,
+      1.2,
+      1.25,
+      1.3,
+      1.35,
+      1.4,
+      1.45,
+      1.5
+    ],
+    "wage_scope_factor": 1.0,
+    "widen_factor": 1.25,
+    "min_test_pass_rate": 0.75,
+    "wilson_z": 1.96,
+    "tie_tolerance": 1e-12
+  },
+  "fit_curve": [
+    {
+      "alpha": 0.3,
+      "mean_d_fit": 0.39291247850474637
+    },
+    {
+      "alpha": 0.35,
+      "mean_d_fit": 0.451987547705613
+    },
+    {
+      "alpha": 0.4,
+      "mean_d_fit": 0.5083975511888091
+    },
+    {
+      "alpha": 0.45,
+      "mean_d_fit": 0.5658690362088692
+    },
+    {
+      "alpha": 0.5,
+      "mean_d_fit": 0.6227577275779886
+    },
+    {
+      "alpha": 0.55,
+      "mean_d_fit": 0.6773971552439639
+    },
+    {
+      "alpha": 0.6,
+      "mean_d_fit": 0.729950755915575
+    },
+    {
+      "alpha": 0.65,
+      "mean_d_fit": 0.7805648279244461
+    },
+    {
+      "alpha": 0.7,
+      "mean_d_fit": 0.8293701044248593
+    },
+    {
+      "alpha": 0.75,
+      "mean_d_fit": 0.8764833218357478
+    },
+    {
+      "alpha": 0.8,
+      "mean_d_fit": 0.9220087306534855
+    },
+    {
+      "alpha": 0.85,
+      "mean_d_fit": 0.9660395145362729
+    },
+    {
+      "alpha": 0.9,
+      "mean_d_fit": 1.0086590979938284
+    },
+    {
+      "alpha": 0.95,
+      "mean_d_fit": 1.0499423336798048
+    },
+    {
+      "alpha": 1.0,
+      "mean_d_fit": 1.0899565678407297
+    },
+    {
+      "alpha": 1.05,
+      "mean_d_fit": 1.1287625875736047
+    },
+    {
+      "alpha": 1.1,
+      "mean_d_fit": 1.1664154567659495
+    },
+    {
+      "alpha": 1.15,
+      "mean_d_fit": 1.2029652494271592
+    },
+    {
+      "alpha": 1.2,
+      "mean_d_fit": 1.2384576899642687
+    },
+    {
+      "alpha": 1.25,
+      "mean_d_fit": 1.2729347101171267
+    },
+    {
+      "alpha": 1.3,
+      "mean_d_fit": 1.3064349319810846
+    },
+    {
+      "alpha": 1.35,
+      "mean_d_fit": 1.3389940859817522
+    },
+    {
+      "alpha": 1.4,
+      "mean_d_fit": 1.3706453719494673
+    },
+    {
+      "alpha": 1.45,
+      "mean_d_fit": 1.4014197706568705
+    },
+    {
+      "alpha": 1.5,
+      "mean_d_fit": 1.431346312389066
+    }
+  ],
+  "selected_alpha": 0.3,
+  "selected_alpha_at_boundary": true,
+  "plateau_alphas": [
+    0.3
+  ],
+  "test": {
+    "n": 8,
+    "passes_model": 3,
+    "passes_equal_split": 5,
+    "passes_alpha1": 0,
+    "wilson_95": [
+      0.13684175946152105,
+      0.6942621454161981
+    ]
+  },
+  "fit": {
+    "n": 9,
+    "passes_model": 4
+  },
+  "reverse": {
+    "selected_alpha": 0.3,
+    "selected_alpha_at_boundary": true,
+    "plateau_alphas": [
+      0.3
+    ],
+    "n_fit": 9,
+    "passes_on_fit": 4,
+    "wilson_95": [
+      0.188775429471914,
+      0.7333526542559703
+    ]
+  },
+  "verdict": {
+    "condition_a": false,
+    "condition_b": false,
+    "accepted": false
+  },
+  "clubs": [
+    {
+      "club_id": 281,
+      "club_name": "Manchester City",
+      "split": "test",
+      "n_players": 33,
+      "pool_gbp_m": 408.0,
+      "ref_min": 525.0,
+      "ref_max": 525.0,
+      "lower_bound": false,
+      "est_selected_k": 418.2591172136911,
+      "d_selected": 0.22729712448363398,
+      "pass_selected": false,
+      "est_equal_split_k": 237.76223776223776,
+      "pass_equal_split": false,
+      "est_alpha1_k": 1134.001134001134,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 1237,
+      "club_name": "Brighton & Hove Albion",
+      "split": "test",
+      "n_players": 33,
+      "pool_gbp_m": 165.0,
+      "ref_min": 87.5,
+      "ref_max": 90.0,
+      "lower_bound": false,
+      "est_selected_k": 164.7920993817471,
+      "d_selected": 0.6048750053511783,
+      "pass_selected": false,
+      "est_equal_split_k": 96.15384615384616,
+      "pass_equal_split": true,
+      "est_alpha1_k": 328.90921743164495,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 931,
+      "club_name": "Fulham FC",
+      "split": "test",
+      "n_players": 22,
+      "pool_gbp_m": 166.5,
+      "ref_min": 130.0,
+      "ref_max": 130.0,
+      "lower_bound": false,
+      "est_selected_k": 200.58150419320003,
+      "d_selected": 0.43368621839462806,
+      "pass_selected": false,
+      "est_equal_split_k": 145.54195804195803,
+      "pass_equal_split": true,
+      "est_alpha1_k": 314.35429927716046,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 11,
+      "club_name": "Arsenal FC",
+      "split": "fit",
+      "n_players": 28,
+      "pool_gbp_m": 347.0,
+      "ref_min": 280.0,
+      "ref_max": 300.0,
+      "lower_bound": true,
+      "est_selected_k": 350.5011736079771,
+      "d_selected": 0.0,
+      "pass_selected": true,
+      "est_equal_split_k": 238.32417582417582,
+      "pass_equal_split": true,
+      "est_alpha1_k": 625.0881938794199,
+      "pass_alpha1": true
+    },
+    {
+      "club_id": 31,
+      "club_name": "Liverpool FC",
+      "split": "fit",
+      "n_players": 35,
+      "pool_gbp_m": 428.0,
+      "ref_min": 350.0,
+      "ref_max": 400.0,
+      "lower_bound": false,
+      "est_selected_k": 405.71868076662963,
+      "d_selected": 0.014195467808776814,
+      "pass_selected": true,
+      "est_equal_split_k": 235.16483516483515,
+      "pass_equal_split": false,
+      "est_alpha1_k": 839.7887185765974,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 1148,
+      "club_name": "Brentford FC",
+      "split": "test",
+      "n_players": 32,
+      "pool_gbp_m": 130.8,
+      "ref_min": 70.0,
+      "ref_max": 75.0,
+      "lower_bound": false,
+      "est_selected_k": 141.4280836339193,
+      "d_selected": 0.6343032314779681,
+      "pass_selected": false,
+      "est_equal_split_k": 78.60576923076924,
+      "pass_equal_split": true,
+      "est_alpha1_k": 335.33302568835575,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 631,
+      "club_name": "Chelsea FC",
+      "split": "test",
+      "n_players": 35,
+      "pool_gbp_m": 359.0,
+      "ref_min": 250.0,
+      "ref_max": 250.0,
+      "lower_bound": false,
+      "est_selected_k": 304.3708079422405,
+      "d_selected": 0.1967858032053999,
+      "pass_selected": true,
+      "est_equal_split_k": 197.25274725274727,
+      "pass_equal_split": false,
+      "est_alpha1_k": 592.0458068644331,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 985,
+      "club_name": "Manchester United",
+      "split": "test",
+      "n_players": 28,
+      "pool_gbp_m": 313.0,
+      "ref_min": 325.0,
+      "ref_max": 350.0,
+      "lower_bound": false,
+      "est_selected_k": 343.3774653314253,
+      "d_selected": 0.0,
+      "pass_selected": true,
+      "est_equal_split_k": 214.97252747252747,
+      "pass_equal_split": false,
+      "est_alpha1_k": 624.7471736677383,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 148,
+      "club_name": "Tottenham Hotspur",
+      "split": "fit",
+      "n_players": 33,
+      "pool_gbp_m": 256.0,
+      "ref_min": 170.0,
+      "ref_max": 240.0,
+      "lower_bound": false,
+      "est_selected_k": 213.257108905902,
+      "d_selected": 0.0,
+      "pass_selected": true,
+      "est_equal_split_k": 149.1841491841492,
+      "pass_equal_split": true,
+      "est_alpha1_k": 391.1342894393742,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 762,
+      "club_name": "Newcastle United",
+      "split": "test",
+      "n_players": 32,
+      "pool_gbp_m": 243.0,
+      "ref_min": 150.0,
+      "ref_max": 160.0,
+      "lower_bound": false,
+      "est_selected_k": 263.0392803353217,
+      "d_selected": 0.4971295606787615,
+      "pass_selected": false,
+      "est_equal_split_k": 146.03365384615384,
+      "pass_equal_split": true,
+      "est_alpha1_k": 535.097908603956,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 405,
+      "club_name": "Aston Villa",
+      "split": "fit",
+      "n_players": 26,
+      "pool_gbp_m": 273.0,
+      "ref_min": 150.0,
+      "ref_max": 150.0,
+      "lower_bound": false,
+      "est_selected_k": 377.3363859728563,
+      "d_selected": 0.9225017660001101,
+      "pass_selected": false,
+      "est_equal_split_k": 201.92307692307693,
+      "pass_equal_split": false,
+      "est_alpha1_k": 1017.4418604651163,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 29,
+      "club_name": "Everton FC",
+      "split": "test",
+      "n_players": 28,
+      "pool_gbp_m": 152.1,
+      "ref_min": 125.0,
+      "ref_max": 150.0,
+      "lower_bound": false,
+      "est_selected_k": 176.24485780284644,
+      "d_selected": 0.1612389715838198,
+      "pass_selected": true,
+      "est_equal_split_k": 104.46428571428571,
+      "pass_equal_split": true,
+      "est_alpha1_k": 366.7920656634747,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 873,
+      "club_name": "Crystal Palace",
+      "split": "fit",
+      "n_players": 25,
+      "pool_gbp_m": 148.3,
+      "ref_min": 105.0,
+      "ref_max": 120.0,
+      "lower_bound": false,
+      "est_selected_k": 198.78306554669982,
+      "d_selected": 0.5047223644454174,
+      "pass_selected": false,
+      "est_equal_split_k": 114.07692307692308,
+      "pass_equal_split": true,
+      "est_alpha1_k": 459.0356757521623,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 703,
+      "club_name": "Nottingham Forest",
+      "split": "fit",
+      "n_players": 25,
+      "pool_gbp_m": 166.7,
+      "ref_min": 110.0,
+      "ref_max": 150.0,
+      "lower_bound": false,
+      "est_selected_k": 205.2682214931295,
+      "d_selected": 0.3136822273634536,
+      "pass_selected": false,
+      "est_equal_split_k": 128.23076923076923,
+      "pass_equal_split": true,
+      "est_alpha1_k": 449.57496691789885,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 989,
+      "club_name": "AFC Bournemouth",
+      "split": "fit",
+      "n_players": 31,
+      "pool_gbp_m": 158.0,
+      "ref_min": 85.0,
+      "ref_max": 85.0,
+      "lower_bound": false,
+      "est_selected_k": 173.8053916511799,
+      "d_selected": 0.7152849780184855,
+      "pass_selected": false,
+      "est_equal_split_k": 98.01488833746899,
+      "pass_equal_split": true,
+      "est_alpha1_k": 393.07393770524436,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 379,
+      "club_name": "West Ham United",
+      "split": "fit",
+      "n_players": 36,
+      "pool_gbp_m": 175.9,
+      "ref_min": 150.0,
+      "ref_max": 150.0,
+      "lower_bound": false,
+      "est_selected_k": 159.3447057759111,
+      "d_selected": 0.06043452234262685,
+      "pass_selected": true,
+      "est_equal_split_k": 93.96367521367522,
+      "pass_equal_split": false,
+      "est_alpha1_k": 372.4611657886267,
+      "pass_alpha1": false
+    },
+    {
+      "club_id": 543,
+      "club_name": "Wolverhampton Wanderers",
+      "split": "fit",
+      "n_players": 24,
+      "pool_gbp_m": 162.1,
+      "ref_min": 80.0,
+      "ref_max": 80.0,
+      "lower_bound": false,
+      "est_selected_k": 218.6380483445318,
+      "d_selected": 1.005390980563847,
+      "pass_selected": false,
+      "est_equal_split_k": 129.8878205128205,
+      "pass_equal_split": false,
+      "est_alpha1_k": 476.7436730732467,
+      "pass_alpha1": false
+    }
+  ],
+  "limitations": [
+    "n is small, so the Wilson interval is wide.",
+    "The reference is itself a Capology-derived estimate: a pass means 'consistent with public estimates', not 'accurate'.",
+    "The metric uses only the club's top weekly wage: alpha is one parameter fitted to one statistic per club and says nothing about the rest of the squad.",
+    "The pool is accounting wages (club-wide staff, bonuses, other costs) while the reference is base salary only. Alpha absorbs this gap and is not the real wage concentration.",
+    "Time mismatch: pool FY 2024/25, squad at the 2026 snapshot, reference from the start of 2025/26 and 2026/27 (often two different players)."
+  ],
+  "provenance": {
+    "code_commit": "c94380e25efce6ea1e78658375cd0562ac8db407",
+    "criteria_tag_commit": "fc2242546cdf562c1aa2318412aa04bd5aaaae6e",
+    "md5_club_finance_seed": "8a9f6ca4a4b7cf23134e0b9093dc2ac6",
+    "md5_wage_reference": "40163e3e8a90d6ec5559a5709f0250d1",
+    "db_meta": {
+      "dataset_path": "/kaggle/input/player-scores",
+      "snapshot_date": "2026-07-11",
+      "season": "2025",
+      "built_at": "2026-10-10T19:48:42.934106",
+      "md5_clubs": "7782360a6f3db4b2a191991b34cbc4b5",
+      "md5_players": "e4591226b71eb4e2dde510c9d359eb60",
+      "md5_transfers": "18f699b7ea4e1666b5b4532a914bd615",
+      "md5_player_valuations": "d5760907843a03d31f08e91375744db7"
+    },
+    "python": "3.15.0",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4",
+    "run_utc": "2026-10-12T16:10:21+00:00"
+  }
+}
