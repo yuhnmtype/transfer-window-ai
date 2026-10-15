@@ -1,0 +1,141 @@
+{
+  "config": {
+    "criteria_tag": "fee-criteria-v1",
+    "expected_sizes": {
+      "train": 1154,
+      "calibration": 185,
+      "test": 206
+    },
+    "interval_level": 0.8,
+    "ratio_threshold": 0.9,
+    "coverage_band": [
+      0.72,
+      0.88
+    ],
+    "bootstrap_resamples": 2000,
+    "bootstrap_seed": 20261015,
+    "sensitivity_train_from": "2015-01-01"
+  },
+  "exclusions": {
+    "1_fee_positive": 4705,
+    "2_pit_valuation_positive": 33,
+    "3_valuation_within_365_days": 30,
+    "4_loan_fee_heuristic": 50,
+    "5_window_month": 0,
+    "6_summer_2026": 17,
+    "7_missing_dob_or_position": 0
+  },
+  "split_sizes": {
+    "train": 1154,
+    "calibration": 185,
+    "test": 206
+  },
+  "features": [
+    "const",
+    "ln_mv",
+    "age",
+    "age_sq",
+    "pos_goalkeeper",
+    "pos_defender",
+    "pos_attack",
+    "winter"
+  ],
+  "coefficients": {
+    "const": 4.863004340910428,
+    "ln_mv": -0.15909459195780554,
+    "age": -0.10353432276670163,
+    "age_sq": 0.0006309683164635537,
+    "pos_goalkeeper": 0.03741495388634547,
+    "pos_defender": 0.036345531844570254,
+    "pos_attack": 0.08592488275905065,
+    "winter": -0.06866082846263537
+  },
+  "conformal_q": 0.714309272881752,
+  "train_median_ratio_m": 1.25,
+  "test": {
+    "model": {
+      "mdape": 0.3104986833236632,
+      "mape": 0.765319083393595,
+      "coverage": 0.8009708737864077,
+      "mean_width_eur_m": 34.46320795189072
+    },
+    "baselines": {
+      "B1": {
+        "mdape": 0.2926845156667318,
+        "mape": 0.7622118334540645
+      },
+      "B2": {
+        "mdape": 0.25,
+        "mape": 0.9423011524054028
+      }
+    },
+    "best_baseline": "B2",
+    "mdape_ratio_model_to_best": 1.2419947332946528,
+    "paired_bootstrap": {
+      "lower_2_5": -0.016338938475428177,
+      "upper_97_5": 0.09324212448627509,
+      "n_resamples": 2000,
+      "seed": 20261015
+    }
+  },
+  "criterion_a": {
+    "passed": false,
+    "ratio_ok": false,
+    "bootstrap_upper_below_zero": false
+  },
+  "criterion_b": {
+    "passed": true,
+    "coverage": 0.8009708737864077,
+    "band": [
+      0.72,
+      0.88
+    ]
+  },
+  "consequences": {
+    "seller_reserve": "fallback: market value x training median ratio",
+    "intervals_used_by_negotiation": true
+  },
+  "sensitivity_train_from_2015": {
+    "note": "Report only; never decides acceptance.",
+    "n_train": 998,
+    "conformal_q": 0.681673199645239,
+    "model": {
+      "mdape": 0.3194488075415896,
+      "mape": 0.7748585109505514,
+      "coverage": 0.7669902912621359,
+      "mean_width_eur_m": 33.00016415642859
+    },
+    "mdape_ratio_to_primary_best_baseline": 1.2777952301663584
+  },
+  "limitations": [
+    "Only transfers with a recorded fee > 0 are modelled (conditional on a fee being paid).",
+    "Selection bias: only transfers involving the 20 clubs of the 2025/26 Premier League.",
+    "Position comes from current data, not from the transfer date.",
+    "No point-in-time contract length is available.",
+    "Fees may inflate over time; there is no time trend.",
+    "The loan-fee filter is a heuristic.",
+    "MAPE is dominated by small fees; MdAPE is the primary metric.",
+    "The test set is small (206 transfers), so all results carry sampling noise."
+  ],
+  "provenance": {
+    "code_commit": "fab67668e3d7d6d685cff9893f3ca6647ee23761",
+    "criteria_tag_commit": "0ebe4635aba601b8cb1089569b92685c6400dc95",
+    "md5_db_file": "2e2020e8c590c8f2a4c8c438411c9583",
+    "md5_criteria_file": "5de15364f0fa7ce1654349428d3591b9",
+    "db_meta": {
+      "dataset_path": "/kaggle/input/player-scores",
+      "snapshot_date": "2026-07-11",
+      "season": "2025",
+      "built_at": "2026-10-10T19:48:42.934106",
+      "md5_clubs": "7782360a6f3db4b2a191991b34cbc4b5",
+      "md5_players": "e4591226b71eb4e2dde510c9d359eb60",
+      "md5_transfers": "18f699b7ea4e1666b5b4532a914bd615",
+      "md5_player_valuations": "d5760907843a03d31f08e91375744db7"
+    },
+    "bootstrap_seed": 20261015,
+    "python": "3.15.0",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4",
+    "run_utc": "2026-10-15T19:44:13+00:00"
+  }
+}
