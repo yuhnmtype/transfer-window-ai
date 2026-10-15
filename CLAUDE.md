@@ -184,9 +184,9 @@ Never present these as official figures.
 - Step (a) done: rule-based one-deal advisor (commit 18cde75). `config/advisor.toml`,
   `src/advisor.py`, `src/advise_cli.py`; 129 tests passing.
 - README and MIT LICENSE: done (commit b8f273e).
-- In progress: (b) outgoing-player amortisation helper.
-- Next, in this order (owner may reorder): (c) negotiation engine plus baseline; (d) ADK
-  layer; (e) evaluation; (f) demo and README update.
+- Step (b) done: outgoing-player amortisation helper (commit b078f5d), 158 tests passing.
+- Next: (c) negotiation engine and rule-based baseline. Then, in this order (owner may
+  reorder): (d) ADK layer; (e) evaluation; (f) demo and README update.
 - Backlog (not scheduled): loan support in deal_delta; GBE module (points table
   unverified); age multiplier for wages (only as an ablation); second sources for Fulham
   and West Ham; Companies House spot-check (Man City, Tottenham, Brighton); second source

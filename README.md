@@ -2,13 +2,15 @@
 
 A rules engine and advisor for Premier League transfer deals under the 2026/27 squad cost ratio (SCR) rules, built on real Transfermarkt data. A multi-agent negotiation layer (Google ADK + Gemini) is planned.
 
-> **Status: work in progress.** Done: data foundation, finance seed, SCR calculator, a rule-based one-deal advisor, and a pre-registered evaluation of a wage model (which failed, see below). Not started: negotiation engine, LLM layer, backtest.
+> **Status: work in progress.** Done: data foundation, finance seed, SCR calculator, a rule-based one-deal advisor, an outgoing-player amortisation helper (approximation), and a pre-registered evaluation of a wage model (which failed, see below). Not started: negotiation engine, LLM layer, backtest.
 
 All figures are illustrative. Finance data is FY 2024/25 from secondary sources and the rules come from secondary sources. **Nothing here is a real-world conclusion about any club.**
 
 ## What it does
 
 Given a buying club and a hypothetical permanent deal (fee, wage, contract length, optional outgoing player), the advisor computes the club's SCR before and after the deal, the threshold that applies (green 85% / red 115%, or 70% / 100% for clubs in UEFA competitions), the headroom, a wage sensitivity table, and the maximum wage that keeps the club within the green or red limit.
+
+For the outgoing player, the advisor can look up the annual amortisation from the transfer history (`--out-player-id`) or take a user-supplied figure (`--out-amortisation-gbp-m`). The outgoing wage stays a user input.
 
 Design rule: **code computes the numbers; an LLM will only be used for judgement** (target choice, offers, rationale), with validated JSON output and a rule-based baseline for ablation.
 
@@ -65,6 +67,12 @@ The data has no player wages, so I tested a simple model that splits each club's
 
 Result (`results/wage_model_eval.json`): **not accepted.** The selected exponent sat at the lower edge of the grid, the model passed 3 of 8 test clubs against 5 of 8 for a naive equal split, and both acceptance conditions failed. Consequently the advisor does not estimate wages: they are user inputs, and any simulation will use clearly labelled scenarios. My untested hypothesis is that the club-wide wage bill is too large relative to player wages; testing it needs new reference data and a new pre-registration.
 
+## Outgoing-player amortisation (approximation)
+
+Method: the purchase fee (EUR, converted at the fixed rate) is spread over the shorter of the contract length (from the purchase to the current expiry) and the 5-year cap; the remaining book value limits the 2026/27 charge. Loan returns at zero fee are skipped. A missing fee or a missing contract expiry returns "unknown", never 0.
+
+A report-only diagnostic (`src/phase3_diag_amortisation.py`) sums the estimates over each buyer club's current squad and compares them with the seed's FY 2024/25 amortisation. For 14 of 17 clubs the ratio is between 0.58 and 1.25 (median 0.89). The outliers are Aston Villa (0.36), Manchester United (0.55) and Sunderland (4.02; Sunderland's seed is a Championship year). The squad (July 2026) and the seed (FY 2024/25) are different periods, so this is a plausibility check, not a validation. Between 3 and 16 players per club come back as "unknown" and are left out of the sums.
+
 ## Limitations
 
 - Finance data is FY 2024/25 and from secondary sources; no revenue growth is applied.
@@ -74,13 +82,13 @@ Result (`results/wage_model_eval.json`): **not accepted.** The selected exponent
 - Fixed EUR to GBP rate of 0.86 (medium confidence).
 - Current squads are approximated from the dataset (mean absolute difference of 3.55 players against official squads).
 - Permanent deals only; loans and the GBE (work permit) rules are not implemented.
+- Outgoing amortisation: contract extensions make the estimate for long-held players possibly understated (flagged); whether the 5-year cap applies to older contracts is unverified (flagged when applied); loan fees and free transfers cannot be told apart in the data; historical fees are converted at the fixed 0.86 rate.
 
 ## Roadmap
 
-1. Outgoing-player amortisation helper (approximation).
-2. Negotiation engine and rule-based baseline.
-3. LLM layer (Google ADK + Gemini) and an ablation against the baseline.
-4. Point-in-time backtest without leakage.
+1. Negotiation engine and rule-based baseline.
+2. LLM layer (Google ADK + Gemini) and an ablation against the baseline.
+3. Point-in-time backtest without leakage.
 
 ## License
 
