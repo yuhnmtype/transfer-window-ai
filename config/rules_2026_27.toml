@@ -27,6 +27,9 @@ no_competition = "NO"
 
 [amortisation]
 cap_years = 5  # source: The Esk only; confidence: low-medium; needs a second source
+# Date at which an outgoing player's remaining amortisation is measured. Approximation:
+# start of 2026/27 for clubs with a 30 June year-end (others differ). Source: owner decision.
+as_of = "2026-07-01"
 
 [fx]
 gbp_per_eur = 0.86  # source: Bank of England spot via poundsterlinglive; confidence: medium; fixed rate

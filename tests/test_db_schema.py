@@ -23,7 +23,12 @@ def conn():
 
 def test_players_columns(conn):
     assert {"player_id", "market_value_in_eur", "current_club_id",
-            "is_current_squad"} <= columns(conn, "players")
+            "is_current_squad", "contract_expiration_date"} <= columns(conn, "players")
+
+
+def test_transfers_columns(conn):
+    assert {"player_id", "transfer_date", "from_club_id", "to_club_id",
+            "transfer_fee"} <= columns(conn, "transfers")
 
 
 def test_club_finance_columns(conn):

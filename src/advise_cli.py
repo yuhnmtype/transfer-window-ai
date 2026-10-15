@@ -9,12 +9,14 @@ import argparse
 import json
 import sqlite3
 import sys
+from dataclasses import asdict
 from pathlib import Path
 
 from advisor import (
     IncomingPlayer, OutgoingPlayer, advise_deal, eligible_clubs, format_text,
     load_advisor_config, to_dict,
 )
+from outgoing_amortisation import lookup_outgoing_amortisation
 from scr import load_config
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -45,9 +47,35 @@ def build_parser():
                         help="optional; assumed 0 (with a warning) if omitted")
     parser.add_argument("--out-wage-gbp-m", type=float, help="outgoing annual wage, GBP m")
     parser.add_argument("--out-amortisation-gbp-m", type=float,
-                        help="outgoing annual amortisation, GBP m (0 allowed)")
+                        help="outgoing annual amortisation, GBP m (0 allowed); overrides "
+                             "the lookup by --out-player-id")
+    parser.add_argument("--out-player-id", type=int,
+                        help="outgoing player in the buyer's squad: estimate the annual "
+                             "amortisation from the transfer history (approximation)")
     parser.add_argument("--json", action="store_true", help="print JSON instead of text")
     return parser
+
+
+def build_outgoing(parser, args, conn, config):
+    """OutgoingPlayer from the flags, or None if there is none. Raises ValueError when the
+    lookup cannot estimate the amortisation (unknown is never turned into 0)."""
+    wage, amort, player_id = (args.out_wage_gbp_m, args.out_amortisation_gbp_m,
+                              args.out_player_id)
+    if player_id is None:
+        if (wage is None) != (amort is None):
+            parser.error("give both --out-wage-gbp-m and --out-amortisation-gbp-m, or neither")
+        return OutgoingPlayer(wage, amort) if wage is not None else None
+    if wage is None:
+        parser.error("--out-player-id needs --out-wage-gbp-m (the outgoing wage is a user input)")
+    if amort is not None:   # override: no lookup
+        return OutgoingPlayer(wage, amort)
+    estimate = lookup_outgoing_amortisation(conn, config, player_id, args.club_id)
+    if estimate.status == "unknown":
+        raise ValueError(f"the amortisation of player_id {player_id} is unknown: "
+                         f"{estimate.reason} Supply it with --out-amortisation-gbp-m.")
+    return OutgoingPlayer(wage, estimate.annual_gbp_m,
+                          amortisation_source="estimated from transfer history",
+                          amortisation_detail=asdict(estimate))
 
 
 def main(argv=None):
@@ -73,18 +101,12 @@ def main(argv=None):
             missing = [name for name, value in required.items() if value is None]
             if missing:
                 parser.error(f"missing required arguments: {', '.join(missing)}")
-            out_given = [args.out_wage_gbp_m is not None,
-                         args.out_amortisation_gbp_m is not None]
-            if any(out_given) and not all(out_given):
-                parser.error("give both --out-wage-gbp-m and --out-amortisation-gbp-m, "
-                             "or neither")
+            outgoing = build_outgoing(parser, args, conn, config)
 
             incoming = IncomingPlayer(
                 fee_amount=args.fee, fee_currency=args.fee_currency,
                 annual_wage_gbp_m=args.wage_gbp_m, contract_years=args.contract_years,
                 agent_fee_gbp_m=args.agent_fee_gbp_m)
-            outgoing = (OutgoingPlayer(args.out_wage_gbp_m, args.out_amortisation_gbp_m)
-                        if all(out_given) else None)
             result = advise_deal(conn, config, args.club_id, incoming, outgoing,
                                  advisor_config=load_advisor_config())
         finally:

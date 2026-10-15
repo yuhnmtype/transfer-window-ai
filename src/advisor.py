@@ -32,12 +32,20 @@ DEAL_WARNING_TEXT = {
     "fee_converted_from_eur": "The fee was converted from EUR at the fixed config rate.",
     "sale_profit_ignored": "Profit on the outgoing player's sale is ignored, which "
                            "understates the benefit of selling.",
+    "outgoing_amortisation_estimated": "The outgoing amortisation is an approximation from "
+                                       "the transfer history (confidence low).",
 }
 
 AMBER_NOTE = ('"amber" is our own label for the band between the green and red thresholds, '
               'not an official Premier League term.')
 
 MAX_WAGE_NOTE = "Only the incoming wage changes; all other inputs stay the same."
+
+UNDERSTATED_NOTE = ("Estimate may be understated (the contract was probably extended): "
+                    "supply --out-amortisation-gbp-m if you know the real figure.")
+
+CAP_APPLIED_NOTE = ("Amortisation cap applied: if the cap does not apply to this older "
+                    "contract, the real annual charge may be lower than the estimate.")
 
 
 class IneligibleBuyerError(ValueError):
@@ -58,6 +66,8 @@ class IncomingPlayer:
 class OutgoingPlayer:
     annual_wage_gbp_m: float
     annual_amortisation_gbp_m: float  # 0 is allowed (academy or free signing)
+    amortisation_source: str = "user-supplied"  # or "estimated from transfer history"
+    amortisation_detail: dict | None = None     # the lookup result, when estimated
 
 
 @dataclass(frozen=True)
@@ -228,6 +238,8 @@ def advise_deal(conn, config, buyer_club_id, incoming, outgoing=None, *, advisor
         deal_codes.append("fee_converted_from_eur")
     if outgoing is not None:
         deal_codes.append("sale_profit_ignored")
+        if outgoing.amortisation_detail is not None:
+            deal_codes.append("outgoing_amortisation_estimated")
 
     return AdviceResult(
         club_id=row["club_id"], club_name=row["club_name"], season=config["season"],
@@ -294,9 +306,18 @@ def format_text(result):
         f"years) + wage {cost['annual_wage_gbp_m']:.2f} GBP m",
     ]
     if result.outgoing:
-        lines.append(f"Outgoing annual cost removed: wage "
-                     f"{result.outgoing['annual_wage_gbp_m']:.2f} + amortisation "
-                     f"{result.outgoing['annual_amortisation_gbp_m']:.2f} GBP m")
+        out = result.outgoing
+        lines.append(f"Outgoing annual cost removed: wage {out['annual_wage_gbp_m']:.2f} + "
+                     f"amortisation {out['annual_amortisation_gbp_m']:.2f} GBP m "
+                     f"(amortisation {out['amortisation_source']})")
+        detail = out["amortisation_detail"]
+        if detail:
+            if detail["possibly_understated"]:
+                lines.append(f"  !!! {UNDERSTATED_NOTE}")
+            if detail["cap_applied"]:
+                lines.append(f"  Note: {CAP_APPLIED_NOTE}")
+            lines.append(f"  {detail['status']}: {detail['reason']}")
+            lines += [f"  - {w}" for w in detail["warnings"]]
     lines += [
         "",
         f"{'':22}{'Before':>10}{'After':>10}",

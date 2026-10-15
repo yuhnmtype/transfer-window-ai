@@ -6,6 +6,7 @@ Rule values come from config/rules_<season>.toml; see CLAUDE.md "Rules" for thei
 """
 import tomllib
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 
 CONFIG_DIR = Path(__file__).resolve().parent.parent / "config"
@@ -247,6 +248,11 @@ def validate_config(config, season):
     if not isinstance(uefa.get("no_competition"), str):
         raise ValueError("config: [scr.uefa] no_competition must be a string")
     _number(config, "amortisation", "cap_years", low=0)
+    as_of = config["amortisation"].get("as_of")
+    try:
+        date.fromisoformat(as_of)
+    except (TypeError, ValueError):
+        raise ValueError("config: [amortisation] as_of must be a YYYY-MM-DD date string") from None
     _number(config, "fx", "gbp_per_eur", low=0)
     _number(config, "assumptions", "revenue_growth_assumption", low=-1)
     _number(config, "assumptions", "wage_scope_factor", low=0)
