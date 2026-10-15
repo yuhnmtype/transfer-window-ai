@@ -183,12 +183,14 @@ Never present these as official figures.
   17 clubs already seen.
 - Step (a) done: rule-based one-deal advisor (commit 18cde75). `config/advisor.toml`,
   `src/advisor.py`, `src/advise_cli.py`; 129 tests passing.
-- Next, in this order (owner may reorder): README (with LICENSE); (b) outgoing-player
-  amortisation helper; (c) negotiation engine plus baseline; (d) ADK layer; (e) evaluation;
-  (f) demo and README update.
+- README and MIT LICENSE: done (commit b8f273e).
+- In progress: (b) outgoing-player amortisation helper.
+- Next, in this order (owner may reorder): (c) negotiation engine plus baseline; (d) ADK
+  layer; (e) evaluation; (f) demo and README update.
 - Backlog (not scheduled): loan support in deal_delta; GBE module (points table
   unverified); age multiplier for wages (only as an ablation); second sources for Fulham
   and West Ham; Companies House spot-check (Man City, Tottenham, Brighton); second source
   for the 5-year amortisation cap; Handbook Section E verification; promoted clubs (v2);
   FY 2025/26 accounts when published; wage-criteria-v2 with new reference data; mark Leeds
-  and Sunderland as "Championship revenue" in --list-clubs output.
+  and Sunderland as "Championship revenue" in --list-clubs output; historical EUR/GBP
+  series with a source, e.g. Bank of England.
