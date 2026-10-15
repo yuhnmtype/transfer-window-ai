@@ -185,12 +185,27 @@ Never present these as official figures.
   `src/advisor.py`, `src/advise_cli.py`; 129 tests passing.
 - README and MIT LICENSE: done (commit b8f273e).
 - Step (b) done: outgoing-player amortisation helper (commit b078f5d), 158 tests passing.
-- Next: (c) negotiation engine and rule-based baseline. Then, in this order (owner may
-  reorder): (d) ADK layer; (e) evaluation; (f) demo and README update.
+- Step (c) part 1 done: fee model criteria frozen in `docs/fee_model_criteria.md` at tag
+  fee-criteria-v1 (commit 0ebe463).
+- Step (c) part 2 done: code commit fab6766, result committed (`results/fee_model_eval.json`).
+  Criterion A FAILED: MdAPE ratio model/best baseline 1.242 vs threshold 0.90; paired
+  bootstrap 95% CI [-0.0163, 0.0932] includes 0. Criterion B PASSED: coverage 0.8010 in
+  [0.72, 0.88]. Fallback in force: seller reserve = market value x train median ratio
+  (1.25), labelled as a fallback.
+- Design decision (a): in the baseline policy, the seller reserve and the buyer valuation
+  are both the fallback value 1.25 x MV. The registered 80% interval is only the allowed
+  band for later LLM-agent adjustments. The interval is wide (q = 0.7143 in log space,
+  mean width 34.46m EUR): its coverage is correct, but it carries little information.
+- Step (c) part 3 (negotiation engine) not started.
+- Then, in this order (owner may reorder): (d) ADK layer; (e) evaluation; (f) demo and
+  README update.
 - Backlog (not scheduled): loan support in deal_delta; GBE module (points table
   unverified); age multiplier for wages (only as an ablation); second sources for Fulham
   and West Ham; Companies House spot-check (Man City, Tottenham, Brighton); second source
   for the 5-year amortisation cap; Handbook Section E verification; promoted clubs (v2);
   FY 2025/26 accounts when published; wage-criteria-v2 with new reference data; mark Leeds
   and Sunderland as "Championship revenue" in --list-clubs output; historical EUR/GBP
-  series with a source, e.g. Bank of England.
+  series with a source, e.g. Bank of England; point-in-time contract length and wages as
+  the missing information for a better fee model (fee-criteria-v2 would need new data);
+  investigate whether the fee/MV ratio is clustered (post-hoc, exploratory, must not
+  change the verdict).

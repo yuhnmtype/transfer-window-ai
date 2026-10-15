@@ -2,7 +2,7 @@
 
 A rules engine and advisor for Premier League transfer deals under the 2026/27 squad cost ratio (SCR) rules, built on real Transfermarkt data. A multi-agent negotiation layer (Google ADK + Gemini) is planned.
 
-> **Status: work in progress.** Done: data foundation, finance seed, SCR calculator, a rule-based one-deal advisor, an outgoing-player amortisation helper (approximation), and a pre-registered evaluation of a wage model (which failed, see below). Not started: negotiation engine, LLM layer, backtest.
+> **Status: work in progress.** Done: data foundation, finance seed, SCR calculator, a rule-based one-deal advisor, an outgoing-player amortisation helper (approximation), and a pre-registered evaluation of a wage model (which failed, see below) and of a fee model (point accuracy not accepted, fallback adopted; the 80% interval is calibrated but wide). Not started: negotiation engine, LLM layer, backtest.
 
 All figures are illustrative. Finance data is FY 2024/25 from secondary sources and the rules come from secondary sources. **Nothing here is a real-world conclusion about any club.**
 
@@ -66,6 +66,17 @@ The full output also prints the incoming-cost line, the wage sensitivity table, 
 The data has no player wages, so I tested a simple model that splits each club's wage bill across its squad in proportion to market value. The acceptance criteria, the fit/test split and the reference data were committed **before** any model code existed and frozen with the git tag `wage-criteria-v1`; the evaluation script refuses to run on a dirty tree and records the code commit and data checksums.
 
 Result (`results/wage_model_eval.json`): **not accepted.** The selected exponent sat at the lower edge of the grid, the model passed 3 of 8 test clubs against 5 of 8 for a naive equal split, and both acceptance conditions failed. Consequently the advisor does not estimate wages: they are user inputs, and any simulation will use clearly labelled scenarios. My untested hypothesis is that the club-wide wage bill is too large relative to player wages; testing it needs new reference data and a new pre-registration.
+
+## Fee model evaluation: pre-registered, failed, fallback adopted
+
+The negotiation engine needs a seller reserve price, so I tested a small fee model (OLS on `ln(fee / point-in-time market value)` with market value, age, position and window type). As with the wage model, the data filters, time-based split, metrics and acceptance rules were committed before any model code and frozen with the git tag [`fee-criteria-v1`](https://github.com/yuhnmtype/transfer-window-ai/tree/fee-criteria-v1); see [`docs/fee_model_criteria.md`](docs/fee_model_criteria.md).
+
+Result (`results/fee_model_eval.json`, 206 test transfers from summer 2025 and January 2026):
+
+- **Point accuracy (criterion A): not accepted.** The learned model did not beat a simple market-value-ratio baseline (not shown to be better; the paired bootstrap interval includes zero). Median absolute percentage error: model 0.310, market value x training median ratio (1.25) 0.250; ratio 1.242 against a required 0.90 or lower; paired bootstrap 95% interval of the difference [-0.016, 0.093].
+- **80% prediction interval (criterion B): accepted.** Coverage 0.801, within the registered band [0.72, 0.88]. The interval is wide (mean width 34.5m EUR), so it is calibrated but carries little information.
+
+Consequently the seller reserve uses the registered fallback, market value x 1.25, labelled as a fallback. The interval is kept only as the allowed band for later adjustments.
 
 ## Outgoing-player amortisation (approximation)
 
