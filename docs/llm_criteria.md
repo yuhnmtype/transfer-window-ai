@@ -51,7 +51,8 @@ off for this model.
 - The dataset is built by `fee_model.build_dataset` with the 7 filters of
   `docs/fee_model_criteria.md` (tag `fee-criteria-v1`). The evaluation script verifies the
   split sizes are exactly 1154 / 185 / 206 before any LLM call, and aborts otherwise.
-- The registered blind run scores only the **206 test rows**.
+- The registered blind run scores only the **206 test rows**, in the order produced by
+  `build_dataset`: transfer date, then `player_id`, ascending.
 - Fallback ratio `m` and conformal quantile `q` are read from `results/fee_model_eval.json`
   (never hard-coded); the evaluation records that file's MD5. With the current file,
   `m = 1.25` and `q = 0.714309...`, so the band is `[exp(-q), exp(q)] = [0.4895, 2.0428]`.
@@ -74,13 +75,24 @@ Same as the blind prompt plus the player's name and the selling and buying clubs
 
 ### Templates
 
-The prompt templates (seller blind, buyer blind, seller named, buyer named) are committed
-before the tag, and their SHA-256 hashes are recorded here: `[to fill at freeze]`.
+The prompt templates (system, seller blind, buyer blind, seller named, buyer named) are in
+`prompts/llm_templates.toml`, committed before the tag. The SHA-256 of each template string
+(exactly as parsed from that file) is recorded here: `[to fill at freeze]`. The band is shown
+in the prompt rounded to 4 decimals (`0.4895`, `2.0428`), and these same rounded values are
+used for validation and clipping. The reference value is shown with 2 decimals.
 
 ## Agents and output
 
 - Two separate ADK agents: seller (reserve adjustment) and buyer (valuation adjustment).
   Each returns JSON `{"factor": <number>, "rationale": <short text>}`.
+- The output **parses** when the response text, after trimming whitespace, is a JSON object
+  with a finite numeric `factor` (not a string, not a boolean) and a string `rationale`. No
+  code fences or extra text are accepted. The 40-word limit on the rationale is requested in
+  the prompt but is not part of validity. This parse rule (for example accepting code fences)
+  may only be changed before the tag `llm-criteria-v1`, and only on the basis of the pilot.
+- An **empty or safety-blocked** model response is model behaviour: it does not parse, so it
+  is **invalid** (retried once, then fallback), and it is never treated as an external
+  failure. Only quota, network and API errors are external failures (see "Complete run").
 - A call is **valid** when its output parses and `factor` is a finite number inside the band
   `[0.4895, 2.0428]`, on the first attempt or on the single retry.
 - If the first attempt is not valid, the call is retried once with the same prompt.
@@ -92,8 +104,12 @@ before the tag, and their SHA-256 hashes are recorded here: `[to fill at freeze]
 ## Reproducibility and cache
 
 - Runtime: venv `.venv-adk`, Python 3.13, google-adk 2.12.0.
-- Every response is cached on disk, keyed by the SHA-256 of (model id, agent role, prompt
-  text). A cached response is always reused; cache entries are never deleted or edited.
+- Every response is cached on disk, keyed by the SHA-256 of (model id, generation settings,
+  agent role, attempt number, system text, prompt text). The attempt number makes the single
+  retry a real new call rather than a cache hit on the first answer. A cached response is
+  always reused; cache entries are never deleted or edited.
+- The cache is served through ADK callbacks: `before_model_callback` returns the cached
+  response, which makes ADK skip the model call; `after_model_callback` stores a new one.
 - The cache is committed with the results. It stores only the model id, agent role, prompt
   hash, prompt text and the response text, and **never the API key or any request headers**;
   a test checks this.
@@ -120,7 +136,8 @@ within these 1,000 ratios (share of placebo ratios less than or equal to the LLM
 ### Leakage diagnostic arm (report only)
 
 - 50 test rows chosen with `numpy.random.default_rng(20261015).choice(206, 50,
-  replace=False)` on the ordered test split, then sorted.
+  replace=False)` as positions in the ordered test split (transfer date, then `player_id`),
+  then sorted.
 - Each of the 50 rows is run a second time with the named prompt (both agents).
 - Report MdAPE of the named arm versus the blind arm on the same 50 rows.
 - This arm necessarily uses test rows. It is **diagnostic only and never gates any
@@ -162,8 +179,12 @@ its calls is missing; it never affects the blind result.
 ## Pilot (before the tag)
 
 `src/llm_pilot.py` sends at most 10 **train** rows (never calibration or test rows) through
-both agents to check the output format. Its cache is kept separate from the evaluation
-cache. The pilot record is filled here at freeze: `[to fill at freeze: date, model id, rows,
+both blind agents to check the output format. The rows are positions
+`numpy.random.default_rng(20261017).choice(n_train, 10, replace=False)` in the ordered train
+split, then sorted; the script refuses any row that is not in the train split. Its cache
+(`results/llm_cache/pilot/`) is kept separate from the evaluation cache, and it writes
+`results/llm_pilot_run1.json` once, never overwritten.
+The pilot record is filled here at freeze: `[to fill at freeze: date, model id, rows,
 valid / retried / clipped / fallback counts, template hashes used]`. Pilot outputs are not
 scored and do not change any criterion.
 

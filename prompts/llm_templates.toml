@@ -1,0 +1,79 @@
+# Prompt templates for the LLM valuation layer (docs/llm_criteria.md).
+# The SHA-256 of each template string (exactly as parsed from this file) is recorded in the
+# criteria at freeze time; any edit changes the hash and needs a new criteria tag.
+# Placeholders are filled by src/llm_agents.py: position, age, mv_m, window, reference_m,
+# m, band_low, band_high, and for the named variants player_name, seller_club, buyer_club.
+
+system = """You are a football transfer valuation assistant. You never compute fees: you only \
+return one multiplicative factor for a reference fee given to you, with a short rationale. \
+Answer with JSON only."""
+
+seller_blind = """You advise the SELLING club in a permanent transfer.
+
+Player profile:
+- Position: {position}
+- Age at transfer: {age}
+- Market value at transfer: {mv_m} million EUR
+- Transfer window: {window}
+
+Reference fee: {reference_m} million EUR (market value x {m}).
+
+Return the factor by which the selling club's minimum acceptable fee differs from the \
+reference fee (1.0 means equal to the reference fee). The factor must be between \
+{band_low} and {band_high}.
+
+Respond with JSON only: {{"factor": <number>, "rationale": "<at most 40 words>"}}"""
+
+buyer_blind = """You advise a BUYING club in a permanent transfer.
+
+Player profile:
+- Position: {position}
+- Age at transfer: {age}
+- Market value at transfer: {mv_m} million EUR
+- Transfer window: {window}
+
+Reference fee: {reference_m} million EUR (market value x {m}).
+
+Return the factor by which the buying club's maximum fee differs from the reference fee \
+(1.0 means equal to the reference fee). The factor must be between {band_low} and \
+{band_high}.
+
+Respond with JSON only: {{"factor": <number>, "rationale": "<at most 40 words>"}}"""
+
+seller_named = """You advise the SELLING club in a permanent transfer.
+
+Player profile:
+- Player: {player_name}
+- Selling club: {seller_club}
+- Buying club: {buyer_club}
+- Position: {position}
+- Age at transfer: {age}
+- Market value at transfer: {mv_m} million EUR
+- Transfer window: {window}
+
+Reference fee: {reference_m} million EUR (market value x {m}).
+
+Return the factor by which the selling club's minimum acceptable fee differs from the \
+reference fee (1.0 means equal to the reference fee). The factor must be between \
+{band_low} and {band_high}.
+
+Respond with JSON only: {{"factor": <number>, "rationale": "<at most 40 words>"}}"""
+
+buyer_named = """You advise a BUYING club in a permanent transfer.
+
+Player profile:
+- Player: {player_name}
+- Selling club: {seller_club}
+- Buying club: {buyer_club}
+- Position: {position}
+- Age at transfer: {age}
+- Market value at transfer: {mv_m} million EUR
+- Transfer window: {window}
+
+Reference fee: {reference_m} million EUR (market value x {m}).
+
+Return the factor by which the buying club's maximum fee differs from the reference fee \
+(1.0 means equal to the reference fee). The factor must be between {band_low} and \
+{band_high}.
+
+Respond with JSON only: {{"factor": <number>, "rationale": "<at most 40 words>"}}"""
