@@ -1,0 +1,32 @@
+# Negotiation settings for the v1 baseline (one round of sealed bids), read by
+# src/negotiation.py, which validates every value at load. Application choices, not football
+# rules, and not season-dependent.
+
+[wages]
+# Annual wage of the incoming player as a share of his market value (EUR, converted to GBP
+# at the fixed config rate). Illustrative, not estimated: the wage model was not accepted
+# (results/wage_model_eval.json). Every result is reported for all ratios.
+ratios = [0.05, 0.10, 0.15]
+label = "illustrative, not estimated"
+
+[contract]
+# Assumption: 5 years is the most favourable amortisation spread for the buyer under the
+# 5-year cap. Source: owner decision.
+contract_years = 5
+
+[agent_fee]
+# Assumed 0: no sourced figure for agent fees.
+agent_fee_gbp_m = 0.0
+
+[acceptance]
+# "green": the buyer must stay at or below the green threshold after the deal (default).
+# "not_red": the buyer must stay at or below the red threshold.
+rule = "green"
+
+[buyers]
+# Number of buyers chosen when the user gives no list (2 or 3).
+n_default = 3
+
+[sources]
+# The fair-value ratio is read from here, never hard-coded.
+fee_results_path = "results/fee_model_eval.json"
