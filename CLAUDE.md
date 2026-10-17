@@ -196,8 +196,11 @@ Never present these as official figures.
   are both the fallback value 1.25 x MV. The registered 80% interval is only the allowed
   band for later LLM-agent adjustments. The interval is wide (q = 0.7143 in log space,
   mean width 34.46m EUR): its coverage is correct, but it carries little information.
-- Step (c) part 3 (negotiation engine) not started.
-- Then, in this order (owner may reorder): (d) ADK layer; (e) evaluation; (f) demo and
+- Step (c) part 3 v1 done: negotiation engine with a rule-based baseline (commit 83a8002:
+  `src/negotiation.py`, `config/negotiation.toml`, `src/negotiate_cli.py`) and a seeded
+  demo deal picker (commit b1ff200: `src/demo_pick_deal.py`); 242 tests passing. Demo deals
+  in `docs/demo_deals.md`.
+- Next, in this order (owner may reorder): (d) ADK layer; (e) evaluation; (f) demo and
   README update.
 - Backlog (not scheduled): loan support in deal_delta; GBE module (points table
   unverified); age multiplier for wages (only as an ablation); second sources for Fulham
@@ -208,4 +211,6 @@ Never present these as official figures.
   series with a source, e.g. Bank of England; point-in-time contract length and wages as
   the missing information for a better fee model (fee-criteria-v2 would need new data);
   investigate whether the fee/MV ratio is clustered (post-hoc, exploratory, must not
-  change the verdict).
+  change the verdict); seller-side effects: outgoing wages unknown and profit on sale
+  needs book value; Tottenham wage bill ambiguity (256m vs 402m) affects default buyer
+  ranking.

@@ -2,7 +2,7 @@
 
 A rules engine and advisor for Premier League transfer deals under the 2026/27 squad cost ratio (SCR) rules, built on real Transfermarkt data. A multi-agent negotiation layer (Google ADK + Gemini) is planned.
 
-> **Status: work in progress.** Done: data foundation, finance seed, SCR calculator, a rule-based one-deal advisor, an outgoing-player amortisation helper (approximation), and a pre-registered evaluation of a wage model (which failed, see below) and of a fee model (point accuracy not accepted, fallback adopted; the 80% interval is calibrated but wide). Not started: negotiation engine, LLM layer, backtest.
+> **Status: work in progress.** Done: data foundation, finance seed, SCR calculator, a rule-based one-deal advisor, an outgoing-player amortisation helper (approximation), and a pre-registered evaluation of a wage model (which failed, see below) and of a fee model (point accuracy not accepted, fallback adopted; the 80% interval is calibrated but wide), and a negotiation engine v1 with a rule-based baseline. Not started: LLM layer, backtest.
 
 All figures are illustrative. Finance data is FY 2024/25 from secondary sources and the rules come from secondary sources. **Nothing here is a real-world conclusion about any club.**
 
@@ -54,6 +54,10 @@ The full output also prints the incoming-cost line, the wage sensitivity table, 
 
 "Amber" is our own label for the band between green and red, not an official term.
 
+## Demo deals
+
+Two runs of the v1 negotiation engine, with how each was chosen and the full output, are in [`docs/demo_deals.md`](docs/demo_deals.md). For the same player, the set of buyers that can afford the reserve changes with the assumed wage level (in the Tonali example, two buyers at 5% of market value, one at 10% and 15%); this is an illustration, not a real-world conclusion.
+
 ## Data and provenance
 
 - **Players, transfers, valuations:** Kaggle `davidcariboo/player-scores` (Transfermarkt scrape, CC0), frozen snapshot 2026-07-11. Checksums are in `DATA_VERSION.md`.
@@ -97,7 +101,7 @@ A report-only diagnostic (`src/phase3_diag_amortisation.py`) sums the estimates 
 
 ## Roadmap
 
-1. Negotiation engine and rule-based baseline.
+1. Negotiation engine: v1 with a rule-based baseline (one round of sealed bids) is done; counter rounds, a player decision model and Monte Carlo runs are not started.
 2. LLM layer (Google ADK + Gemini) and an ablation against the baseline.
 3. Point-in-time backtest without leakage.
 
