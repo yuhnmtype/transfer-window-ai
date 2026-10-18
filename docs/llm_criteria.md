@@ -1,8 +1,7 @@
-# LLM valuation layer: pre-registered evaluation criteria (DRAFT)
+# LLM valuation layer: pre-registered evaluation criteria (v1)
 
-DRAFT, not frozen. Items marked `[to fill at freeze]` are filled in the freeze commit, which is
-tagged `llm-criteria-v1`. After the tag, the criteria are not changed; any change is a new
-commit with a reason and a new tag (`llm-criteria-v2`), never an edit of v1.
+Frozen by the tag `llm-criteria-v1`. After the tag, the criteria are not changed; any change is
+a new commit with a reason and a new tag (`llm-criteria-v2`), never an edit of v1.
 
 ## What was examined before writing this
 
@@ -77,9 +76,10 @@ Same as the blind prompt plus the player's name and the selling and buying clubs
 
 The prompt templates (system, seller blind, buyer blind, seller named, buyer named) are in
 `prompts/llm_templates.toml`, committed before the tag. The SHA-256 of each template string
-(exactly as parsed from that file) is recorded here: `[to fill at freeze]`. The band is shown
-in the prompt rounded to 4 decimals (`0.4895`, `2.0428`), and these same rounded values are
-used for validation and clipping. The reference value is shown with 2 decimals.
+(exactly as parsed from that file) is recorded in the Pilot record below, as written by the
+pilot script. The band is shown in the prompt rounded to 4 decimals (`0.4895`, `2.0428`), and
+these same rounded values are used for validation and clipping. The reference value is shown
+with 2 decimals.
 
 ## Agents and output
 
@@ -110,9 +110,9 @@ used for validation and clipping. The reference value is shown with 2 decimals.
   always reused; cache entries are never deleted or edited.
 - The cache is served through ADK callbacks: `before_model_callback` returns the cached
   response, which makes ADK skip the model call; `after_model_callback` stores a new one.
-- The cache is committed with the results. It stores only the model id, agent role, prompt
-  hash, prompt text and the response text, and **never the API key or any request headers**;
-  a test checks this.
+- The cache is committed with the results. Each entry stores only the cache key, model id,
+  generation settings, agent role, attempt number, system text, prompt text and response
+  text, and **never the API key or any request headers**; a test checks this.
 - The results file records: model id, ADK and Python versions, generation settings, prompt
   template hashes, cache file hash, code commit, tag commit, MD5 of
   `results/fee_model_eval.json`, seeds, and the counts of valid, retried, clipped and fallback
@@ -183,22 +183,83 @@ both blind agents to check the output format. The rows are positions
 `numpy.random.default_rng(20261017).choice(n_train, 10, replace=False)` in the ordered train
 split, then sorted; the script refuses any row that is not in the train split. Its cache
 (`results/llm_cache/pilot/`) is kept separate from the evaluation cache, and it writes
-`results/llm_pilot_run1.json` once, never overwritten.
-The pilot record is filled here at freeze: `[to fill at freeze: date, model id, rows,
-valid / retried / clipped / fallback counts, template hashes used]`. Pilot outputs are not
-scored and do not change any criterion.
+`results/llm_pilot_run1.json` once, never overwritten. Pilot outputs are not scored and do
+not change any criterion.
+
+### Pilot record
+
+- Result file: `results/llm_pilot_run1.json` (10 train rows, blind seller and buyer agents).
+- Counts: 20 responses, 20 valid, 0 retried, 0 clipped, 0 fallback.
+- Code commit: `2583b97`. Model `gemini-3.5-flash-lite`, google-adk 2.12.0, Python 3.13.16,
+  generation settings as registered above.
+- Template SHA-256 (as recorded in the result file):
+  - system `07e0d4a6779c8ac0403587d72a6201b3fc903f46bd20e7adf2f870556f79226b`
+  - seller_blind `af1509ae7f92ecf338b39ede72996e5c386220aee52e4305a3130a22c29628d8`
+  - buyer_blind `04fe2c0927a7230b411dc05e61bd3144d56dcb17fa71ddb8fc18c7fba62d4bdb`
+  - seller_named `77af1a2bd3767a5272a73eef1260c5f07d430520fd6da17e7bce5bb4f7995db3`
+  - buyer_named `57cfb9ff64b70b66458c58b80ef060b4cd33f7865c8499e24294ca0c1ec9cdbf`
+
+Provenance of the 20 responses:
+- 16 come from an earlier invocation of `src/llm_pilot.py` by the project owner on 2026-10-17
+  at 19:22:24 to 19:22:36 +0100, with a different API key (same model id and configuration).
+  That run stopped before completing and wrote no results file. The script did not record the
+  cause; the AI Studio rate-limit page later showed a peak of 16 requests per minute on
+  2026-10-17, against a limit of 15 per minute.
+- The other 4 came from live calls on 2026-10-18 at 12:35 +0100, in the run that wrote the
+  result file.
+- The result file's "20 calls" therefore counts cache hits: 16 cached plus 4 live.
+
+Observations (plain facts; no accuracy was computed on pilot rows):
+- (a) All seller factors were at least 1.15, so the combined factor tends to be above 1: the
+  geometric mean of the 10 combined factors `sqrt(f_s x f_b)` is about 1.13.
+- (b) The rationales mention details that are not in the prompt features (for example
+  leadership, versatility or importance to the squad). They are narrative, not evidence of
+  reasoning.
+- (c) The safety-block path was not exercised.
+- (d) The response text format varied between calls at temperature 0 (6 compact and 14
+  indented JSON texts). This is why the committed cache, not the model, is the
+  reproducibility mechanism.
+
+No template, parse rule or criterion was changed after the pilot.
 
 ## Quota estimate
 
+This section is an operational estimate. It is not part of the pre-registered criteria, and
+it does not constrain or change any criterion.
+
+How the numbers are computed:
+- Blind arm: 206 test rows x 2 agents = 412 primary calls.
+- Named arm: 50 rows x 2 agents = 100 primary calls.
+- The "worst case" column assumes one retry for every call, as in the retry rule above, so it
+  doubles the primary calls.
+
 | Part | Primary calls | Worst case with one retry each |
 |---|---|---|
-| Pilot (train, before the tag) | 20 | 40 |
+| Pilot (train, done) | 20 responses: 16 from the run on 2026-10-17 and 4 live on 2026-10-18; no retries | done |
 | Blind arm (registered) | 412 | 824 |
 | Named arm (diagnostic) | 100 | 200 |
-| **Total** | **532** | **1,064** |
+| **Planned remaining (blind + named)** | **512** | **1,024** |
 
-The placebo arm needs no calls. The quota limits of the owner's account are not known here
-and must be checked before the run; batches resumed from the cache are allowed (see above).
+The placebo arm needs no calls. Batches resumed from the cache are allowed (see "Complete
+run").
+
+Operational note: the AI Studio rate-limit page on 2026-10-18 for `gemini-3.5-flash-lite`
+(free tier, Default Gemini Project) shows limits of 15 requests per minute, 250K tokens per
+minute and 500 requests per day, and a recorded peak on 2026-10-17 of 16 requests per minute
+(above the limit), 3.16K tokens per minute and 17 requests per day. This explains the 429
+TooManyRequests on that day; the page does not say which request was refused. The limits apply
+per project, count failed and retried requests, may change, and the daily limit resets at
+midnight Pacific time. They must be rechecked before the run.
+
+Operational plan for the main run (**not a criterion, and it does not change the cache key**):
+- A throttle of at most 10 requests per minute.
+- A backoff on 429 and on other external errors, with a bounded number of attempts; when the
+  attempts are used up, the "Complete run" rule applies.
+- A daily budget below 500 requests, counting failed and retried requests.
+- The blind arm first; the named arm in a later batch, after the daily reset.
+- The planned remaining 512 primary calls therefore need at least 2 Pacific days (412 blind,
+  then 100 named), and the worst case of 1,024 needs at least 3.
+- Batches resume from the cache.
 
 ## Guards and order of commits
 
@@ -207,9 +268,12 @@ and must be checked before the run; batches resumed from the cache are allowed (
    is committed and tagged `llm-criteria-v1`.
 2. The main evaluation script that touches the test split is committed **only after** the
    tag. Its guard refuses to run if that script already existed at the tag commit.
-3. The evaluation script refuses: a dirty working tree (including untracked files); a missing
-   tag `llm-criteria-v1`; this file or the prompt templates changed since the tag; split
-   sizes other than 1154 / 185 / 206; an existing results file (atomic write, no overwrite);
+3. The evaluation script refuses: a dirty working tree, where the only allowed exception is
+   untracked files inside the evaluation cache directory (`results/llm_cache/eval/`) named
+   `<64 lowercase hex characters>.json` (cache entries from earlier batches); any other
+   untracked or modified file still makes the script refuse; a missing tag
+   `llm-criteria-v1`; this file or the prompt templates changed since the tag; split sizes
+   other than 1154 / 185 / 206; an existing results file (atomic write, no overwrite);
    a model id in the code that differs from `gemini-3.5-flash-lite`. There is no option to
    skip the guards.
 

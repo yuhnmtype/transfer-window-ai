@@ -1,0 +1,293 @@
+{
+  "rows": [
+    {
+      "player_id": 170929,
+      "transfer_date": "2013-01-24",
+      "split": "train",
+      "seller": {
+        "role": "seller",
+        "factor": 1.4,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "As a selling club, we demand a premium for a young 20-year-old defender with high potential during the winter window when squad depth is crucial."
+      },
+      "buyer": {
+        "role": "buyer",
+        "factor": 1.15,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "At age 20, this young defender possesses high resale potential and positional versatility. Paying slightly above the reference fee is justified by future upside and winter market urgency."
+      }
+    },
+    {
+      "player_id": 333241,
+      "transfer_date": "2019-07-23",
+      "split": "train",
+      "seller": {
+        "role": "seller",
+        "factor": 1.15,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "As the selling club, we demand a premium given the player's young age of 23, high potential, and strong market demand during the summer window."
+      },
+      "buyer": {
+        "role": "buyer",
+        "factor": 1.05,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "At age 23, the midfielder offers significant long-term upside and resale value, justifying a slight premium over the reference fee."
+      }
+    },
+    {
+      "player_id": 465606,
+      "transfer_date": "2020-01-03",
+      "split": "train",
+      "seller": {
+        "role": "seller",
+        "factor": 1.4,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "As the selling club in a winter window, we command a premium for a young, high-potential 20-year-old attacker, minimizing disruption and risk."
+      },
+      "buyer": {
+        "role": "buyer",
+        "factor": 1.15,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "At age 20 with high attacking upside, the buying club is willing to pay a slight premium over the reference fee to secure his long-term potential in the winter window."
+      }
+    },
+    {
+      "player_id": 42710,
+      "transfer_date": "2021-07-27",
+      "split": "train",
+      "seller": {
+        "role": "seller",
+        "factor": 1.15,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "As the selling club, we demand a slight premium over the reference fee due to the player's leadership, proven experience, and importance to our current squad planning during the summer window."
+      },
+      "buyer": {
+        "role": "buyer",
+        "factor": 0.75,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "At age 32, the defender has limited resale value and a shorter remaining peak period, justifying a downward adjustment from the reference fee."
+      }
+    },
+    {
+      "player_id": 631996,
+      "transfer_date": "2022-07-17",
+      "split": "train",
+      "seller": {
+        "role": "seller",
+        "factor": 1.4,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "As a selling club, we demand a premium above the reference fee due to the player's high potential, young age of 19, and significant future resale value."
+      },
+      "buyer": {
+        "role": "buyer",
+        "factor": 1.1,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "At nineteen with high upside as a midfielder, a slight premium over the reference fee is justified for long-term squad planning."
+      }
+    },
+    {
+      "player_id": 505219,
+      "transfer_date": "2022-09-01",
+      "split": "train",
+      "seller": {
+        "role": "seller",
+        "factor": 1.25,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "As the selling club, we demand a premium for a high-potential 21-year-old midfielder in the summer market to offset future sporting losses, maintaining the reference fee."
+      },
+      "buyer": {
+        "role": "buyer",
+        "factor": 1.05,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "A slight premium over the reference fee is justified given the player's high potential and resale value at age 21, fitting our long-term midfield strategy."
+      }
+    },
+    {
+      "player_id": 627626,
+      "transfer_date": "2022-09-01",
+      "split": "train",
+      "seller": {
+        "role": "seller",
+        "factor": 1.45,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "As the selling club, we demand a premium for an elite 19-year-old attacker with immense resale potential and strong summer market interest."
+      },
+      "buyer": {
+        "role": "buyer",
+        "factor": 1.15,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "High potential for a 19-year-old attacker justifies a modest premium over the reference fee for long-term value."
+      }
+    },
+    {
+      "player_id": 337787,
+      "transfer_date": "2023-01-31",
+      "split": "train",
+      "seller": {
+        "role": "seller",
+        "factor": 1.4,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "Mid-season departures for a 25-year-old key midfielder cause disruption. As the selling club, we demand a higher premium during the winter window."
+      },
+      "buyer": {
+        "role": "buyer",
+        "factor": 0.95,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "As the buying club in a winter transfer, we apply a slight discount to account for mid-season integration risks, reducing the reference fee marginally."
+      }
+    },
+    {
+      "player_id": 176553,
+      "transfer_date": "2023-08-24",
+      "split": "train",
+      "seller": {
+        "role": "seller",
+        "factor": 1.15,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "As the selling club, we demand a slight premium above the reference fee to account for the defender's peak experience, reliability, and the defensive disruption caused by a summer departure."
+      },
+      "buyer": {
+        "role": "buyer",
+        "factor": 0.88,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "At 29, the player offers limited future resale value, warranting a slight downward adjustment from the premium reference fee."
+      }
+    },
+    {
+      "player_id": 417348,
+      "transfer_date": "2024-02-23",
+      "split": "train",
+      "seller": {
+        "role": "seller",
+        "factor": 1.2,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "As the selling club in a winter transfer, we demand a premium for losing a key starting defender mid-season, keeping our valuation firm above the baseline."
+      },
+      "buyer": {
+        "role": "buyer",
+        "factor": 0.85,
+        "valid": true,
+        "attempts": 1,
+        "clipped": false,
+        "fallback": false,
+        "rationale": "At 29 years old with limited resale value and winter market inflation taken into account, the buying club reduces the reference fee to manage long-term depreciation risk."
+      }
+    }
+  ],
+  "band": [
+    0.4895,
+    2.0428
+  ],
+  "m": 1.25,
+  "q": 0.714309272881752,
+  "counts": {
+    "all": {
+      "calls": 20,
+      "valid": 20,
+      "retried": 0,
+      "clipped": 0,
+      "fallback": 0,
+      "valid_share": 1.0
+    },
+    "seller": {
+      "calls": 10,
+      "valid": 10,
+      "retried": 0,
+      "clipped": 0,
+      "fallback": 0,
+      "valid_share": 1.0
+    },
+    "buyer": {
+      "calls": 10,
+      "valid": 10,
+      "retried": 0,
+      "clipped": 0,
+      "fallback": 0,
+      "valid_share": 1.0
+    }
+  },
+  "provenance": {
+    "model_id": "gemini-3.5-flash-lite",
+    "generation": {
+      "temperature": 0.0,
+      "seed": 20261015,
+      "candidate_count": 1,
+      "thinking_level": "MINIMAL",
+      "include_thoughts": false,
+      "response_schema": "FactorOutput{factor: number, rationale: string}"
+    },
+    "google_adk": "2.12.0",
+    "python": "3.13.16",
+    "template_sha256": {
+      "system": "07e0d4a6779c8ac0403587d72a6201b3fc903f46bd20e7adf2f870556f79226b",
+      "seller_blind": "af1509ae7f92ecf338b39ede72996e5c386220aee52e4305a3130a22c29628d8",
+      "buyer_blind": "04fe2c0927a7230b411dc05e61bd3144d56dcb17fa71ddb8fc18c7fba62d4bdb",
+      "seller_named": "77af1a2bd3767a5272a73eef1260c5f07d430520fd6da17e7bce5bb4f7995db3",
+      "buyer_named": "57cfb9ff64b70b66458c58b80ef060b4cd33f7865c8499e24294ca0c1ec9cdbf"
+    },
+    "pilot_seed": 20261017,
+    "pilot_n": 10,
+    "cache_dir": "results\\llm_cache\\pilot",
+    "md5_fee_results": "22084719ccbc15e75036cc1101f90223",
+    "code_commit": "2583b97f8c2ad60b77532dfc383258e05f2e67ac",
+    "started_utc": "2026-10-18T11:35:02+00:00",
+    "finished_utc": "2026-10-18T11:35:08+00:00"
+  }
+}
