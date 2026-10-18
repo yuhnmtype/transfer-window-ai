@@ -323,12 +323,17 @@ def call_once(role, system_text, prompt_text, attempt, cache, model, model_id=MO
         raise LlmCallError(f"{role} call failed: {type(error).__name__}") from error
 
 
-def evaluate_call(role, system_text, prompt_text, band, cache, model, model_id=MODEL_ID):
-    """First attempt, a single retry when needed, then the registered decision."""
-    responses = [call_once(role, system_text, prompt_text, 1, cache, model, model_id)]
+def evaluate_call(role, system_text, prompt_text, band, cache, model, model_id=MODEL_ID,
+                  call=None):
+    """First attempt, a single retry when needed, then the registered decision.
+
+    call has the signature of call_once (the default); the evaluation script passes a wrapper
+    that adds throttling, a request budget and backoff without changing the cache key."""
+    call = call or call_once
+    responses = [call(role, system_text, prompt_text, 1, cache, model, model_id)]
     first = parse_factor(responses[0])
     if first is None or not in_band(first, band):
-        responses.append(call_once(role, system_text, prompt_text, 2, cache, model, model_id))
+        responses.append(call(role, system_text, prompt_text, 2, cache, model, model_id))
     d = decide(responses, band)
     return CallResult(role=role, factor=d["factor"], valid=d["valid"], attempts=d["attempts"],
                       clipped=d["clipped"], fallback=d["fallback"],
