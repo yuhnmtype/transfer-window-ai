@@ -245,7 +245,7 @@ def factor_for(prompt):
     return round(0.6 + int(hashlib.sha256(prompt.encode()).hexdigest(), 16) % 120 / 100, 2)
 
 
-def deterministic_model(fail=False):
+def deterministic_model(fail=False, rationale="r", factor=None):
     pytest.importorskip("google.adk")
     from google.adk.models.base_llm import BaseLlm
     from google.adk.models.llm_response import LlmResponse
@@ -265,7 +265,8 @@ def deterministic_model(fail=False):
             prompt = llm_request.contents[-1].parts[0].text
             self._prompts.append(prompt)
             yield LlmResponse(content=types.Content(role="model", parts=[types.Part(
-                text=json.dumps({"factor": factor_for(prompt), "rationale": "r"}))]))
+                text=json.dumps({"factor": factor if factor is not None else factor_for(prompt),
+                                 "rationale": rationale}))]))
 
     model = Fake()
     model._fail = fail
@@ -511,3 +512,72 @@ def test_help_documents_exit_codes(capsys):
         ev.build_parser().parse_args(["--help"])
     out = " ".join(capsys.readouterr().out.split())   # argparse wraps lines
     assert "4 NOT RUN" in out and "3 request budget reached" in out
+
+
+# ---------- Progress logging (stderr; counts and HTTP status codes only) ----------
+
+SENTINEL = "SENTINEL-7f3c-do-not-log"
+ALLOWED_LOG_LINES = [
+    r"\[llm-eval\] start: arm=(blind|named) rows=\d+ planned_calls=\d+ rpm=[\d.]+ max_requests=\d+",
+    r"\[llm-eval\] progress: \d+/\d+ calls, live \d+, cache hits \d+, elapsed \d+s",
+    r"\[llm-eval\] backoff: attempt \d+ of \d+, HTTP (\d{3}|none), waiting \d+s",
+]
+
+
+def logged_run(tmp_path, model, n, log):
+    ctrl, _ = controller()
+    ctrl.log = log or (lambda line: None)
+    return ev.execute("blind", rows(n), 1.25, Q, la.load_templates(),
+                      la.DiskCache(tmp_path / "cache"), model, ctrl, tmp_path / "out.json",
+                      "fake-model", log=log)
+
+
+def test_progress_log_has_counts_only(tmp_path, capsys):
+    import re
+    # 10 rows = 20 calls -> one start line and one progress line
+    model = deterministic_model(rationale=SENTINEL, factor=1.234567)
+    code, _ = logged_run(tmp_path, model, 10, ev.stderr_log)
+    assert code == ev.EXIT_OK
+    err = capsys.readouterr().err
+    lines = err.splitlines()
+    assert lines[0] == "[llm-eval] start: arm=blind rows=10 planned_calls=20 rpm=10000 max_requests=10000"
+    assert lines[1].startswith("[llm-eval] progress: 20/20 calls, live 20, cache hits 0, elapsed ")
+    assert len(lines) == 2
+    for line in lines:
+        assert any(re.fullmatch(p, line) for p in ALLOWED_LOG_LINES), line
+    # Nothing from the response, the prompt, the cache keys or the fees
+    for forbidden in (SENTINEL, "1.234567", "Midfield", "Reference fee", "rationale", "factor"):
+        assert forbidden not in err
+    assert not re.search(r"[0-9a-f]{64}", err)
+    assert not re.search(r"\d{7,}", err)                      # no fee or market value
+
+
+def test_results_are_byte_identical_with_logging(tmp_path):
+    off, on = tmp_path / "off", tmp_path / "on"
+    off.mkdir(), on.mkdir()
+    assert logged_run(off, deterministic_model(rationale=SENTINEL), 10, None)[0] == ev.EXIT_OK
+    lines = []
+    assert logged_run(on, deterministic_model(rationale=SENTINEL), 10, lines.append)[0] == ev.EXIT_OK
+    assert lines                                               # logging really happened
+    assert (off / "out.json").read_bytes() == (on / "out.json").read_bytes()
+    assert sorted(p.name for p in (off / "cache").glob("*.json")) ==         sorted(p.name for p in (on / "cache").glob("*.json"))  # same cache keys
+
+
+@pytest.mark.parametrize("error, expected", [
+    ("429", "backoff: attempt 1 of 4, HTTP 429, waiting 30s"),
+    ("network", "backoff: attempt 1 of 4, HTTP none, waiting 30s"),
+])
+def test_backoff_is_logged_with_status_only(tmp_path, capsys, error, expected):
+    pytest.importorskip("google.adk")
+    first = api_error(429) if error == "429" else ConnectionError(f"network {SENTINEL}")
+    code, _ = logged_run(tmp_path, scripted_model([first] + ["ok"] * 4), 2, ev.stderr_log)
+    assert code == ev.EXIT_OK
+    err = capsys.readouterr().err
+    assert f"[llm-eval] {expected}" in err.splitlines()
+    assert SENTINEL not in err and "TEST" not in err             # no exception text
+
+
+def test_no_log_by_default(tmp_path, capsys):
+    ctrl, _ = controller()
+    run(tmp_path, deterministic_model(), ctrl, n=10)
+    assert capsys.readouterr().err == ""

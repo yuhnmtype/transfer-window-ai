@@ -91,6 +91,15 @@ def is_retryable(status):
     return status is None or status == 429 or 500 <= status <= 599
 
 
+PROGRESS_EVERY = 20   # completed calls between progress lines
+
+
+def stderr_log(line):
+    """Operational progress on stderr: counts and HTTP status codes only, never prompts,
+    responses, factors, fees, rationales, cache keys or environment variables."""
+    print(f"[llm-eval] {line}", file=sys.stderr, flush=True)
+
+
 # ---------- Guards ----------
 
 def _git(repo_root, *args):
@@ -161,9 +170,10 @@ class Controller:
     external errors. External errors are never cached (call_once only caches responses)."""
 
     def __init__(self, throttle, max_requests, backoff=BACKOFF, sleep=time.sleep,
-                 call_once=la.call_once):
+                 call_once=la.call_once, log=None):
         self.throttle, self.max_requests, self.backoff = throttle, max_requests, backoff
         self.sleep, self.call_once = sleep, call_once
+        self.log = log or (lambda line: None)
         self.live_requests = self.cache_hits = 0
 
     def __call__(self, role, system_text, prompt_text, attempt, cache, model, model_id):
@@ -192,7 +202,10 @@ class Controller:
                 if i == self.backoff["max_attempts"] - 1:
                     raise IncompleteRun(f"{error}; {self.backoff['max_attempts']} attempts "
                                         "used") from error
-                self.sleep(delays[min(i, len(delays) - 1)])
+                delay = delays[min(i, len(delays) - 1)]
+                self.log(f"backoff: attempt {i + 1} of {self.backoff['max_attempts']}, "
+                         f"HTTP {status if status is not None else 'none'}, waiting {delay}s")
+                self.sleep(delay)
         raise AssertionError("unreachable")
 
 
@@ -223,6 +236,12 @@ def run_calls(rows, kind, m, q, templates, cache, model, controller, model_id, n
                                           model_id, call=controller)
             if progress is not None:
                 progress["done"] += 1
+                log = progress.get("log")
+                if log and progress["done"] % PROGRESS_EVERY == 0:
+                    elapsed = time.monotonic() - progress["start"]
+                    log(f"progress: {progress['done']}/{progress['total']} calls, live "
+                        f"{controller.live_requests}, cache hits {controller.cache_hits}, "
+                        f"elapsed {elapsed:.0f}s")
         out.append(pair)
     return out
 
@@ -344,10 +363,14 @@ def write_new(target, data):
 
 
 def execute(arm, rows, m, q, templates, cache, model, controller, target, model_id,
-            names=None, blind_rows=None, provenance_fn=None):
-    """Run one arm and write its results only if complete. Returns (exit code, message)."""
-    progress = {"done": 0}
+            names=None, blind_rows=None, provenance_fn=None, log=None):
+    """Run one arm and write its results only if complete. Returns (exit code, message).
+    log (optional) receives operational progress lines; it never affects the results."""
     total = 2 * len(rows)
+    progress = {"done": 0, "total": total, "log": log, "start": time.monotonic()}
+    if log:
+        log(f"start: arm={arm} rows={len(rows)} planned_calls={total} "
+            f"rpm={60 / controller.throttle.interval:g} max_requests={controller.max_requests}")
     try:
         results = run_calls(rows, arm, m, q, templates, cache, model, controller, model_id,
                             names, progress)
@@ -456,11 +479,11 @@ def main(argv=None):
 
     m, q, fee_md5 = fee_parameters()
     templates = la.load_templates()
-    controller = Controller(Throttle(args.rpm), args.max_requests)
+    controller = Controller(Throttle(args.rpm), args.max_requests, log=stderr_log)
     code, message = execute(
         args.arm, rows, m, q, templates, la.DiskCache(REPO_ROOT / EVAL_CACHE_REL), la.MODEL_ID,
         controller, target, la.MODEL_ID, names, blind_rows,
-        provenance_fn=lambda c: provenance(REPO_ROOT, templates, fee_md5, c))
+        provenance_fn=lambda c: provenance(REPO_ROOT, templates, fee_md5, c), log=stderr_log)
     print(message)
     return code
 
