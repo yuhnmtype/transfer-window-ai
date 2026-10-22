@@ -170,7 +170,8 @@ Never present these as official figures.
   user inputs (the DB has no wages); player_sales_avg_years > 1 not implemented.
 - Wage model pre-registration: criteria and split in `docs/wage_model_criteria.md`,
   reference in `seed/wage_reference.csv` (check: `python src/phase3_check_wage_reference.py`).
-  Committed before any model code; criteria change only by a new commit with a reason.
+  Committed before the evaluation script existed and before any model code touched the test
+  split; criteria change only by a new commit with a reason.
 - Wage model result: NOT ACCEPTED. The registered evaluation (tag wage-criteria-v1, code
   commit c94380e, `results/wage_model_eval.json`) was run once. Alpha was selected at the
   lower grid boundary (0.30); test passes 3/8 vs equal split 5/8; conditions A and B both
@@ -200,8 +201,19 @@ Never present these as official figures.
   `src/negotiation.py`, `config/negotiation.toml`, `src/negotiate_cli.py`) and a seeded
   demo deal picker (commit b1ff200: `src/demo_pick_deal.py`); 242 tests passing. Demo deals
   in `docs/demo_deals.md`.
-- Next, in this order (owner may reorder): (d) ADK layer; (e) evaluation; (f) demo and
-  README update.
+- Step (d) LLM layer done: criteria frozen at tag llm-criteria-v1 (commit 8f5e7cf) after the
+  pilot (`results/llm_pilot_run1.json`, 20 of 20 valid); evaluation code commit 26f38e0, progress
+  logging commit a906af1.
+- LLM blind run1 (`results/llm_eval_blind_run1.json`): criterion A FAILED (MdAPE ratio 1.348;
+  paired bootstrap 95% CI of MdAPE_LLM - MdAPE_fallback [+0.041, +0.140]); criterion V PASSED
+  (valid share 1.000). Named-prompt diagnostic (`results/llm_eval_named_run1.json`, report
+  only): named MdAPE 0.308 vs blind 0.357 on the same 50 rows; cause not established, memory
+  leakage not excluded. As registered: the baseline policy (factor 1) stays the default; the
+  LLM policy is experimental and used only for the ablation; any new prompt experiment needs
+  llm-criteria-v2.
+- Public documentation: README rewritten; full numbers in `docs/results.md`. 354 tests as of
+  code commit a906af1 (from a pytest --collect-only run in the google-adk venv).
+- Next (owner may reorder): (e) point-in-time backtest; (f) demo.
 - Backlog (not scheduled): loan support in deal_delta; GBE module (points table
   unverified); age multiplier for wages (only as an ablation); second sources for Fulham
   and West Ham; Companies House spot-check (Man City, Tottenham, Brighton); second source
