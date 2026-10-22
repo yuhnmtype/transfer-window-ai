@@ -1,0 +1,70 @@
+{
+  "n_rows": 50,
+  "note": "Diagnostic only; never gates any criterion.",
+  "named_mdape": 0.307949553313975,
+  "blind_mdape_same_rows": 0.35747487609899314,
+  "counts_per_agent": {
+    "seller": {
+      "calls": 50,
+      "valid": 50,
+      "retried": 0,
+      "clipped": 0,
+      "fallback": 0,
+      "valid_share": 1.0
+    },
+    "buyer": {
+      "calls": 50,
+      "valid": 50,
+      "retried": 0,
+      "clipped": 0,
+      "fallback": 0,
+      "valid_share": 1.0
+    }
+  },
+  "arm": "named",
+  "provenance": {
+    "model_id": "gemini-3.5-flash-lite",
+    "generation": {
+      "temperature": 0.0,
+      "seed": 20261015,
+      "candidate_count": 1,
+      "thinking_level": "MINIMAL",
+      "include_thoughts": false,
+      "response_schema": "FactorOutput{factor: number, rationale: string}"
+    },
+    "google_adk": "2.12.0",
+    "python": "3.13.16",
+    "template_sha256": {
+      "system": "07e0d4a6779c8ac0403587d72a6201b3fc903f46bd20e7adf2f870556f79226b",
+      "seller_blind": "af1509ae7f92ecf338b39ede72996e5c386220aee52e4305a3130a22c29628d8",
+      "buyer_blind": "04fe2c0927a7230b411dc05e61bd3144d56dcb17fa71ddb8fc18c7fba62d4bdb",
+      "seller_named": "77af1a2bd3767a5272a73eef1260c5f07d430520fd6da17e7bce5bb4f7995db3",
+      "buyer_named": "57cfb9ff64b70b66458c58b80ef060b4cd33f7865c8499e24294ca0c1ec9cdbf"
+    },
+    "cache_sha256": "20f237e6c440ac4d2c3664eb280cde2b5cf59c551b0fdb96509c1eefd89f59d3",
+    "code_commit": "a906af1e705762036ce60093c460682776c00060",
+    "criteria_tag_commit": "8f5e7cf9c86c5c7901b3304e1af48cfb833e1145",
+    "md5_fee_results": "22084719ccbc15e75036cc1101f90223",
+    "seeds": {
+      "bootstrap": 20261015,
+      "placebo": 20261016,
+      "named_sample": 20261015,
+      "sdk": 20261015
+    },
+    "operational": {
+      "rpm": 10.0,
+      "max_requests": 450,
+      "backoff": {
+        "max_attempts": 4,
+        "delays_seconds": [
+          30,
+          60,
+          120
+        ]
+      },
+      "live_requests_this_invocation": 100,
+      "cache_hits_this_invocation": 0
+    },
+    "finished_utc": "2026-10-22T19:36:02+00:00"
+  }
+}
