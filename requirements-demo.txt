@@ -1,0 +1,4 @@
+# Optional dependencies for the local demo (src/demo_app.py), installed into .venv-demo.
+# The core (requirements.txt) and the google-adk venv do not need these.
+-r requirements.txt
+gradio==6.30.0

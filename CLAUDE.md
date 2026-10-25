@@ -212,8 +212,10 @@ Never present these as official figures.
   LLM policy is experimental and used only for the ablation; any new prompt experiment needs
   llm-criteria-v2.
 - Public documentation: README rewritten; full numbers in `docs/results.md`. 354 tests as of
-  code commit a906af1 (from a pytest --collect-only run in the google-adk venv).
-- Next (owner may reorder): (e) point-in-time backtest; (f) demo.
+  code commit a906af1, plus 30 in tests/test_demo_app.py (384 collected in the google-adk venv).
+- Local demo done: `src/demo_app.py` (Gradio, local only, baseline policy, no LLM, no API key),
+  `tests/test_demo_app.py`, `requirements-demo.txt` (venv `.venv-demo`, Python 3.13).
+- Next: (e) limited point-in-time backtest.
 - Backlog (not scheduled): loan support in deal_delta; GBE module (points table
   unverified); age multiplier for wages (only as an ablation); second sources for Fulham
   and West Ham; Companies House spot-check (Man City, Tottenham, Brighton); second source

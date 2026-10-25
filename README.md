@@ -109,6 +109,24 @@ ADK/GenAI client. The key is never written to a file, and the committed response
 no key or request headers. The registered evaluation commands and the reproduction notes are in
 [`docs/results.md`](docs/results.md#how-to-reproduce).
 
+### Local demo
+
+A local Gradio app (`src/demo_app.py`) wraps the one-deal advisor and the negotiation engine.
+It runs on your machine only, never calls a language model, needs no API key, uses the
+rule-based baseline policy only, and always shows the three wage scenarios and the
+illustrative-only banner. Build the database first (`python src\phase1_build_db.py`, then
+`python src\phase2_load_seed.py`), then use a separate venv named `.venv-demo` with Python
+3.13. An equivalent setup (the same interpreter, 3.13.16, and gradio 6.30.0) was used to create
+`.venv-demo`; the exact commands shown here were not re-run for this README.
+
+```powershell
+py -3.13 -m venv .venv-demo
+.\.venv-demo\Scripts\python.exe -m pip install -r requirements-demo.txt   # includes gradio==6.30.0
+.\.venv-demo\Scripts\python.exe src\demo_app.py
+```
+
+Then open http://127.0.0.1:7860.
+
 ## Reproducibility
 
 - Criteria are frozen by git tags (`wage-criteria-v1`, `fee-criteria-v1`, `llm-criteria-v1`);
@@ -119,9 +137,9 @@ no key or request headers. The registered evaluation commands and the reproducti
   its cached response.
 - Each result file has a provenance block: code commit, tag commit, data checksums or the
   fee-results checksum, library versions, seeds and generation settings.
-- The test suite has 354 tests as of code commit a906af1 (from a `pytest --collect-only` run
-  in the google-adk venv); they use synthetic data and a fake model, and never read the real
-  test split.
+- The test suite has 354 tests as of code commit a906af1, plus 30 in `tests/test_demo_app.py`
+  (384 collected in the google-adk venv); they use synthetic data and a fake model, and never
+  read the real test split.
 
 ## Data and provenance
 
@@ -150,6 +168,10 @@ no key or request headers. The registered evaluation commands and the reproducti
 - Finance data is FY 2024/25 from secondary sources, with no revenue growth applied; the seed
   wage bill is club-wide and overstates squad costs; impairment is counted as 0; profit on the
   outgoing player's sale is ignored; Leeds, Sunderland and Burnley have Championship revenue.
+- Tottenham Hotspur's wage bill is unresolved between sources: the seed uses 256m (PSRwatch),
+  while The Esk gives 248.3m at company level and about 402m at group level
+  (`seed/SOURCES.md`). Its headroom figures are therefore unreliable, and so is its place in
+  the default buyer ranking; the demo shows a note whenever Tottenham is in a result.
 - SCR rules come from secondary sources; the Premier League Handbook text was not checked.
 - Current squads are approximated from the dataset (mean absolute difference of 3.55 players
   against official squads, `DATA_VERSION.md`).
@@ -159,9 +181,9 @@ no key or request headers. The registered evaluation commands and the reproducti
 
 Done: data foundation, finance seed, SCR rules engine, one-deal advisor, outgoing-player
 amortisation helper, negotiation engine v1 with a rule-based baseline, pre-registered
-evaluations of the wage model, the fee model and the LLM agents.
+evaluations of the wage model, the fee model and the LLM agents, and a local Gradio demo.
 
-Pending: a point-in-time backtest of past windows, and a demo. Counter rounds, a player decision
+Pending: a point-in-time backtest of past windows. Counter rounds, a player decision
 model and Monte Carlo runs for the negotiation engine are not started.
 
 ## License
