@@ -113,6 +113,19 @@ def test_build_dataset_point_in_time_value_age_and_split():
     assert (same_day["mv_eur"], same_day["split"]) == (6e6, "train")
 
 
+def test_keep_summer_2026_leaves_the_default_output_unchanged():
+    default, default_excl = build_dataset(filter_fixture())
+    kept, kept_excl = build_dataset(filter_fixture(), keep_summer_2026=True)
+    # Default: the registered behaviour, exactly as in test_build_dataset_exclusion_counts
+    assert default_excl[FILTERS[5]] == 1 and list(default["player_id"]) == [12, 11]
+    # With the option, the only difference is the summer-2026 row (player 9, split None)
+    s2026 = kept[kept["window"] == "S2026"]
+    assert list(s2026["player_id"]) == [9] and s2026["split"].isna().all()
+    pd.testing.assert_frame_equal(kept[kept["window"] != "S2026"].reset_index(drop=True),
+                                  default)
+    assert kept_excl == {**default_excl, FILTERS[5]: 0}
+
+
 def test_build_dataset_never_reads_transfer_fee_clean():
     # The fixture has no transfer_fee_clean column at all; build_dataset must still work.
     data, _ = build_dataset(filter_fixture())

@@ -44,12 +44,15 @@ def split_of(window):
     raise ValueError(f"Window {window} is not placed by the registered split")
 
 
-def build_dataset(conn):
+def build_dataset(conn, keep_summer_2026=False):
     """Apply the 7 registered filters in order.
 
     Returns (dataset, exclusions): dataset has one row per kept transfer with fee_eur, mv_eur,
     window, split, age and position, ordered by (transfer_date, player_id); exclusions maps
     each filter to the number of rows it removed.
+    keep_summer_2026=True skips filter 6 (used only to count S2026 for
+    docs/backtest_criteria.md); those rows get split None. The default is the registered
+    behaviour.
     """
     transfers = pd.read_sql("SELECT player_id, transfer_date, from_club_id, to_club_id, "
                             "transfer_fee FROM transfers", conn, parse_dates=["transfer_date"])
@@ -93,7 +96,10 @@ def build_dataset(conn):
     df = keep(df, df["window"].notna(), FILTERS[4])
 
     # 6. Summer 2026 is incomplete
-    df = keep(df, df["window"] != "S2026", FILTERS[5])
+    if not keep_summer_2026:
+        df = keep(df, df["window"] != "S2026", FILTERS[5])
+    else:
+        exclusions[FILTERS[5]] = 0
 
     # 7. Date of birth and position must be present
     df = df.merge(players, on="player_id", how="left")
@@ -102,7 +108,7 @@ def build_dataset(conn):
     if unknown:
         raise ValueError(f"Unregistered position values: {unknown}")
 
-    df["split"] = [split_of(w) for w in df["window"]]
+    df["split"] = [None if w == "S2026" else split_of(w) for w in df["window"]]
     df["age"] = (df["transfer_date"] - df["date_of_birth"]).dt.days / DAYS_PER_YEAR
     df = df.rename(columns={"transfer_fee": "fee_eur", "market_value_in_eur": "mv_eur",
                             "date": "valuation_date"})
