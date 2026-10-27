@@ -132,6 +132,16 @@ py -3.13 -m venv .venv-demo
 
 Then open http://127.0.0.1:7860.
 
+<img src="docs/images/demo_advisor.png" width="800" alt="Advisor tab: SCR report for Brentford FC with a 20m GBP fee, 3m GBP annual wage over 4 years, showing before/after ratio, wage sensitivity and caveats">
+
+<img src="docs/images/demo_negotiation.png" width="800" alt="Negotiation tab: one round of sealed bids for Sandro Tonali (Newcastle United) under three wage scenarios, rule green, baseline policy">
+
+Screenshots of the local Gradio demo; the demo is not publicly hosted. Illustrative only, not a
+real-world conclusion about any club; wage scenarios are assumptions. The Tottenham Hotspur
+finance row has an unresolved wage-bill discrepancy between sources, so its headroom figures
+(including the very large max fee in the negotiation screenshot) are unreliable; see
+Limitations.
+
 ## Reproducibility
 
 - Criteria are frozen by git tags (`wage-criteria-v1`, `fee-criteria-v1`, `llm-criteria-v1`);

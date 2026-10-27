@@ -220,7 +220,7 @@ Never present these as official figures.
   `src/phase3_eval_backtest.py` (commit 0b90f13); result `results/backtest_windows_run1.json`
   (commit 3c4ecbf). Descriptive only, no pass/fail; MdAPE per window 0.250 to 0.573; results
   in `docs/results.md`.
-- Next: small items only: demo console polish, README screenshots, Tottenham wage-bill check.
+- Next: small items only: demo console polish, Tottenham wage-bill check.
 - Backlog (not scheduled): loan support in deal_delta; GBE module (points table
   unverified); age multiplier for wages (only as an ablation); second sources for Fulham
   and West Ham; Companies House spot-check (Man City, Tottenham, Brighton); second source
