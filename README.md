@@ -162,8 +162,9 @@ Limitations.
   scrape, CC0), frozen snapshot 2026-07-11. Checksums are in `DATA_VERSION.md`.
 - **Club finances (FY 2024/25):** `seed/club_finance_seed.csv`, built from secondary sources
   (Swiss Ramble, PSRwatch and others) and cross-checked against `seed/club_finance_sources.csv`
-  (46 source rows). Not checked against Companies House. Every seed row has a source URL and a
-  confidence level.
+  (47 source rows). Not checked against Companies House, except the Tottenham Hotspur row,
+  which was checked against its filed consolidated accounts on 2026-10-27. Every seed row has a
+  source URL and a confidence level.
 - **Rejected source:** the "Global Football Transfer Market 2010-2026" dataset (Nefedov) was
   rejected because it appears to be mostly synthetic.
 - The database contains the 20 clubs of the 2025/26 Premier League; the three newly promoted
@@ -183,10 +184,10 @@ Limitations.
 - Finance data is FY 2024/25 from secondary sources, with no revenue growth applied; the seed
   wage bill is club-wide and overstates squad costs; impairment is counted as 0; profit on the
   outgoing player's sale is ignored; Leeds, Sunderland and Burnley have Championship revenue.
-- Tottenham Hotspur's wage bill is unresolved between sources: the seed uses 256m (PSRwatch),
-  while The Esk gives 248.3m at company level and about 402m at group level
-  (`seed/SOURCES.md`). Its headroom figures are therefore unreliable, and so is its place in
-  the default buyer ranking; the demo shows a note whenever Tottenham is in a result.
+- Tottenham Hotspur's finance row agrees, within rounding, with its filed FY 2024/25
+  consolidated accounts (Companies House 01706358; see `seed/SOURCES.md`). Its wage bill
+  (256m) is group-wide staff costs, including stadium and retail staff, so it overstates squad
+  cost; the demo shows a note whenever Tottenham is in a result.
 - SCR rules come from secondary sources; the Premier League Handbook text was not checked.
 - The SCR engine has not been validated against real outcomes: the finance seed is FY 2024/25
   only and was published between December 2025 and May 2026, so it cannot be shown to be

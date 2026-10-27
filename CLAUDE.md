@@ -60,10 +60,14 @@ Portfolio project for an AI Engineering CV. Later stages use Google ADK + Gemini
   advisor only adds the incremental cost of the incoming player and removes the outgoing one.
 - Method: check at least two independent sources (Swiss Ramble, PSRwatch, club releases).
   Use the more precise figure when sources agree. Confidence is the weakest field in the row.
-- All figures come from secondary sources and were not checked against Companies House.
+- All figures come from secondary sources and were not checked against Companies House,
+  except the Tottenham Hotspur row, which was checked against its filed consolidated accounts
+  on 2026-10-27.
 - Lessons: Man City wages are 408m. The 579m from The Esk was rejected. Brighton revenue is
-  222m (242m wrongly included property income). Tottenham wages are ambiguous (256m football
-  company vs about 402m group).
+  222m (242m wrongly included property income). Tottenham wages 256m are group staff costs
+  (Tottenham Hotspur Limited, consolidated, incl. stadium and retail staff); 248.3m is
+  company-level (Tottenham Hotspur Football & Athletic Co. Ltd); the "about 402m group" figure
+  is not supported by the filed accounts (checked 2026-10-27, see seed/SOURCES.md).
 - Leeds, Sunderland and Burnley played FY 2024/25 in the Championship, so their revenue is not
   representative of Premier League income (confidence low). The rules engine needs a separate
   Premier League revenue estimate for them.
@@ -157,9 +161,10 @@ Never present these as official figures.
 
 ## Status
 - Phase 1 (data foundation): done and reproducible.
-- Phase 2 (finance seed): done for all 20 clubs, with a structured sources table (46 rows).
+- Phase 2 (finance seed): done for all 20 clubs, with a structured sources table (47 rows).
   Both check scripts pass. Weakest rows: Fulham and West Ham (single source), Leeds, Sunderland
-  and Burnley (Championship revenue), Tottenham and Crystal Palace (source disagreement).
+  and Burnley (Championship revenue), Crystal Palace (source disagreement). Tottenham was
+  checked against its filed consolidated accounts on 2026-10-27 (confidence high).
 - Rules verification: done at secondary-source level (see Rules). Open items listed under
   "Still to verify".
 - Phase 3 step 1 (SCR calculator): done. `config/rules_2026_27.toml`, `src/scr.py`,
@@ -220,10 +225,10 @@ Never present these as official figures.
   `src/phase3_eval_backtest.py` (commit 0b90f13); result `results/backtest_windows_run1.json`
   (commit 3c4ecbf). Descriptive only, no pass/fail; MdAPE per window 0.250 to 0.573; results
   in `docs/results.md`.
-- Next: small items only: demo console polish, Tottenham wage-bill check.
+- Next: small items only: demo console polish.
 - Backlog (not scheduled): loan support in deal_delta; GBE module (points table
   unverified); age multiplier for wages (only as an ablation); second sources for Fulham
-  and West Ham; Companies House spot-check (Man City, Tottenham, Brighton); second source
+  and West Ham; Companies House spot-check (Man City, Brighton); second source
   for the 5-year amortisation cap; Handbook Section E verification; promoted clubs (v2);
   FY 2025/26 accounts when published; wage-criteria-v2 with new reference data; mark Leeds
   and Sunderland as "Championship revenue" in --list-clubs output; historical EUR/GBP
@@ -231,5 +236,4 @@ Never present these as official figures.
   the missing information for a better fee model (fee-criteria-v2 would need new data);
   investigate whether the fee/MV ratio is clustered (post-hoc, exploratory, must not
   change the verdict); seller-side effects: outgoing wages unknown and profit on sale
-  needs book value; Tottenham wage bill ambiguity (256m vs 402m) affects default buyer
-  ranking.
+  needs book value.

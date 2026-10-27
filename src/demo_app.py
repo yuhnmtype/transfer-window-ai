@@ -36,11 +36,15 @@ SEASON = "2026/27"   # application default (v1 runs one season), not finance dat
 SCENARIO_COUNT = 3
 DEFAULT_CURRENCY = "GBP"
 PAGE_HEADER = f"# Transfer Window AI (local demo)\n\n> **{BANNER}**"
-# Tottenham Hotspur's wage bill is unresolved between sources (seed/SOURCES.md): the seed uses
-# 256m (PSRwatch); The Esk gives 248.3m at company level and about 402m at group level.
+# Tottenham Hotspur's finance row was checked against the filed FY 2024/25 consolidated
+# accounts (Companies House 01706358; see seed/SOURCES.md). Its wage bill (256m) is group-wide
+# staff costs, including stadium and retail staff.
 TOTTENHAM_CLUB_ID = 148
-TOTTENHAM_NOTE = ("The Tottenham Hotspur finance row has an unresolved wage-bill discrepancy "
-                  "between sources; its headroom figures are unreliable")
+TOTTENHAM_NOTE = ("Tottenham Hotspur: the finance row agrees, within rounding, with the filed "
+                  "consolidated accounts for FY 2024/25. The wage bill is group-wide staff costs "
+                  "and includes stadium and retail staff, so it overstates squad cost. A very "
+                  "large max fee is an SCR headroom ceiling multiplied by the assumed contract "
+                  "length, not a prediction and not a cash check.")
 
 
 class DemoInputError(ValueError):

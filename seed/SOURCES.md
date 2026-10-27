@@ -1,16 +1,19 @@
 # Finance seed sources (FY 2024/25)
 
 All figures are in GBP millions. Every figure comes from a **secondary source** that
-summarises audited accounts. None was checked against the primary filing (Companies
-House) or the club's own annual report PDF. Swiss Ramble articles are paywalled, so only
-the visible part was read. Sources were accessed between 2026-10-10 and 2026-10-11.
+summarises audited accounts, except the Tottenham Hotspur Companies House row, which is a
+primary filing; the Tottenham Hotspur seed row was checked against it on 2026-10-27. No
+other row was checked against the primary filing (Companies House) or the club's own annual
+report PDF. Swiss Ramble articles are paywalled, so only the visible part was read. Sources
+were accessed between 2026-10-10 and 2026-10-11.
 
 The machine-readable version of this table is `club_finance_sources.csv`, which is checked
 against the seed by `python src/phase2_check_sources.py`. Keep both in sync.
 
 Abbreviations: SR = Swiss Ramble, PSR = PSRwatch, GotP = Game of the People.
 "n/s" means the source did not state the figure. "Published" is the date of the article,
-not the filing date of the accounts, and "-" means unknown.
+not the filing date of the accounts, except for the Companies House row, where it is the
+filing date; "-" means unknown.
 
 ## Per-club source comparison
 
@@ -38,8 +41,9 @@ not the filing date of the accounts, and "-" means unknown.
 | Manchester United | [SR](https://swissramble.substack.com/p/manchester-united-finances-202425) | - | 667 | 313 | 49 | 193 |
 | Manchester United | [United in Focus](https://www.unitedinfocus.com/news/man-united-break-667m-record-as-official-paperwork-released-psr-position-now-clear/) | - | 666.5 | 313 | n/s | 196 |
 | Tottenham | [PSR](https://psrwatch.com/insights/tottenham-accounts-explained-2025) | - | 565 | 256 | 52.6 | 142 |
-| Tottenham | [The Esk](https://theesk.org/2026/04/17/the-analysis-series-analysis-of-tottenham-hotspur-football-athletic-co-ltd-and-tottenham-hotspur-limited-strategic-review-of-the-2024-25-fiscal-period/) | 2026-04-17 | 565.3 | 248.3 (company) / about 402 (group) | 52.4 | 146.6 (includes impairment) |
+| Tottenham | [The Esk](https://theesk.org/2026/04/17/the-analysis-series-analysis-of-tottenham-hotspur-football-athletic-co-ltd-and-tottenham-hotspur-limited-strategic-review-of-the-2024-25-fiscal-period/) | 2026-04-17 | 565.3 | 248.3 (company) / about 402 (group, not supported by the filed accounts) | 52.4 (company) | 146.6 (company line incl. impairments and other football trading) |
 | Tottenham | [Inside World Football](https://www.insideworldfootball.com/2026/04/02/spurs-finances-match-pitch-failings-loses-jump-51m/) | 2026-04-02 | 565.3 | n/s | n/s | n/s |
+| Tottenham | [Companies House, consolidated accounts](https://find-and-update.company-information.service.gov.uk/company/01706358/filing-history) | 2026-03-30 (filing date) | 565.266 | 255.811 | 52.565 | 141.851 |
 | Newcastle | [SR](https://swissramble.substack.com/p/newcastle-united-finances-202425) | - | 335 | 243 | 20 | 100 |
 | Newcastle | [PSR](https://psrwatch.com/insights/newcastle-accounts-explained-2025) | - | 335 | 243 | 19.9 | 99.9 |
 | Aston Villa | [SR](https://swissramble.substack.com/p/aston-villa-finances-202425) | - | 378 | 273 | 52 | 100 (excludes 6.5 impairment) |
@@ -70,9 +74,22 @@ not the filing date of the accounts, and "-" means unknown.
   staff-cost aggregate.
 - **Brighton revenue 242 (derived from GotP) and 247 (Inside World Football):** rejected.
   242 includes 20 of Monks Farm property income. SR and PSR give 222 and 221.
-- **Tottenham wages:** unresolved. 256 (PSR) is used as the football wage bill. 248.3 is the
-  company-level figure and about 402 is group-level, which includes non-football staff.
-- **Tottenham amortisation:** 142 (PSR) is used. The Esk gives 146.6, which includes impairment.
+- **Tottenham:** checked on 2026-10-27 against the filed FY 2024/25
+  consolidated accounts of Tottenham Hotspur Limited (Companies House 01706358, made up to
+  30 June 2025, filed 2026-03-30): revenue and other income 565.266 (revenue alone 564.881);
+  staff costs 255.811 (877 average employees: 335 players and football administration, 473
+  stadium operations and support, 69 retail and distribution); profit on disposal of
+  intangible assets 52.565; amortisation of intangible assets 141.851 (player registrations
+  141.180). The seed keeps revenue 565.3, wages 256.0 (group staff costs, so they include
+  stadium and retail staff) and amortisation 142.0, uses the group profit on sales 52.6, and
+  has confidence `high`.
+- **What the secondary sources said about Tottenham:** PSR's 256 wages, 52.6 profit on sales
+  and 142 amortisation match the group figures. The Esk's 248.3 wages and 52.4 profit on sales
+  are the company-level figures of Tottenham Hotspur Football & Athletic Co. Ltd (00057186:
+  staff costs 248.263, profit on disposal 52.445), and its 146.6 matches the company-level
+  line "amortisation, impairments and other net football trading" (146.627; group 146.720).
+  The Esk's "about 402 group-level" wage figure is not supported by the filed consolidated
+  accounts.
 - **Crystal Palace revenue and wages:** SR and PSR differ by more than rounding. SR is used
   because it gives one decimal. Definitions may differ.
 - **Aston Villa amortisation:** 100 (SR, excludes a 6.5 impairment) is used. PSR gives 106,

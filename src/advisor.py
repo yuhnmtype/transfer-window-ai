@@ -185,7 +185,7 @@ def standing_caveats(config):
         "Player impairment is counted as 0.",
         "Profit on the outgoing player's sale is ignored.",
         f"Finance data is FY {config['data_vintage']['finance_fiscal_year']} from secondary "
-        "sources, not checked against Companies House.",
+        "sources; only the Tottenham Hotspur row has been checked against Companies House.",
         f"EUR to GBP uses a fixed rate of {config['fx']['gbp_per_eur']}, not point-in-time.",
         "Rules come from secondary sources; the Premier League Handbook text was not checked.",
         "This is not a real-world conclusion.",
