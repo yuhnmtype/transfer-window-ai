@@ -1,0 +1,150 @@
+{
+  "criteria_tag": "backtest-criteria-v1",
+  "m": 1.25,
+  "estimate": "fee_hat = m x MV_pit (registered fallback; m never refitted)",
+  "windows": [
+    {
+      "window": "S2023",
+      "role": "train",
+      "n": 147,
+      "mdape": 0.33460076045627374,
+      "mdape_ci95": [
+        0.25,
+        0.4166666666666667
+      ],
+      "median_fee_to_mv": 1.2,
+      "share_ape_le_0_25": 0.4489795918367347,
+      "low_precision": false
+    },
+    {
+      "window": "W2024",
+      "role": "train",
+      "n": 16,
+      "mdape": 0.5729166666666667,
+      "mdape_ci95": [
+        0.4746248025276461,
+        1.1364556584739536
+      ],
+      "median_fee_to_mv": 0.8809523809523809,
+      "share_ape_le_0_25": 0.125,
+      "low_precision": true
+    },
+    {
+      "window": "S2024",
+      "role": "calibration",
+      "n": 153,
+      "mdape": 0.36363636363636365,
+      "mdape_ci95": [
+        0.25213675213675213,
+        0.3888888888888889
+      ],
+      "median_fee_to_mv": 1.125,
+      "share_ape_le_0_25": 0.41830065359477125,
+      "low_precision": false
+    },
+    {
+      "window": "W2025",
+      "role": "calibration",
+      "n": 32,
+      "mdape": 0.3875,
+      "mdape_ci95": [
+        0.25,
+        0.6041666666666667
+      ],
+      "median_fee_to_mv": 1.5,
+      "share_ape_le_0_25": 0.375,
+      "low_precision": false
+    },
+    {
+      "window": "S2025",
+      "role": "test",
+      "n": 177,
+      "mdape": 0.25,
+      "mdape_ci95": [
+        0.21602787456445993,
+        0.30675909878682844
+      ],
+      "median_fee_to_mv": 1.1111111111111112,
+      "share_ape_le_0_25": 0.5423728813559322,
+      "low_precision": false
+    },
+    {
+      "window": "W2026",
+      "role": "test",
+      "n": 29,
+      "mdape": 0.3888888888888889,
+      "mdape_ci95": [
+        0.1284722222222222,
+        0.8188405797101449
+      ],
+      "median_fee_to_mv": 1.16,
+      "share_ape_le_0_25": 0.4827586206896552,
+      "low_precision": true
+    }
+  ],
+  "s2026_count": 17,
+  "expected_counts": {
+    "S2023": 147,
+    "W2024": 16,
+    "S2024": 153,
+    "W2025": 32,
+    "S2025": 177,
+    "W2026": 29,
+    "S2026": 17
+  },
+  "role_labels": {
+    "train": "m was fitted on the train set, so these windows are in-sample for the fallback.",
+    "calibration": "Not used to fit m.",
+    "test": "The registered test windows (206 rows), already used in the fee-model and LLM evaluations."
+  },
+  "interpretation_rules": [
+    "The table is descriptive only.",
+    "Windows with n < 30 are flagged low precision.",
+    "No claim of stability or drift is made beyond what the bootstrap intervals show; overlapping intervals are not reported as evidence of stability, and non-overlapping intervals are not reported as evidence of a cause.",
+    "No parameter (m, the 80% band of fee-criteria-v1) may be changed because of this table.",
+    "The test windows are reused for description only; this changes no registered conclusion of the fee-model or LLM evaluations.",
+    "Train windows are in-sample for m and must not be read as out-of-sample performance.",
+    "Each interval is a separate 95% interval; there is no adjustment for the six windows."
+  ],
+  "limitations": [
+    "Descriptive only; window sizes are small, and two windows are below 30 rows.",
+    "Inherits the limitations of docs/fee_model_criteria.md: fee > 0 only (conditional on a fee being paid), selection bias (transfers involving the 20 clubs of the 2025/26 Premier League only), position from current data, no point-in-time contract length, possible fee inflation over time, heuristic loan filter.",
+    "The train windows are in-sample for m; the test windows have already been used.",
+    "Point-in-time market values can be up to 365 days old."
+  ],
+  "provenance": {
+    "code_commit": "0b90f137734b95a0d4563dad7ebb7fa8c3e95b82",
+    "criteria_tag": "backtest-criteria-v1",
+    "criteria_tag_commit": "479783e38ad1716b4674172d0e55c39d0156107e",
+    "db_meta": {
+      "dataset_path": "/kaggle/input/player-scores",
+      "snapshot_date": "2026-07-11",
+      "season": "2025",
+      "built_at": "2026-10-10T19:48:42.934106",
+      "md5_clubs": "7782360a6f3db4b2a191991b34cbc4b5",
+      "md5_players": "e4591226b71eb4e2dde510c9d359eb60",
+      "md5_transfers": "18f699b7ea4e1666b5b4532a914bd615",
+      "md5_player_valuations": "d5760907843a03d31f08e91375744db7"
+    },
+    "fee_results": {
+      "path": "D:\\transfer-window-ai\\results\\fee_model_eval.json",
+      "md5_lf": "22084719ccbc15e75036cc1101f90223",
+      "code_commit": "fab67668e3d7d6d685cff9893f3ca6647ee23761",
+      "criteria_tag_commit": "0ebe4635aba601b8cb1089569b92685c6400dc95"
+    },
+    "seed": 20261027,
+    "n_resamples": 2000,
+    "order_key": [
+      "transfer_date",
+      "player_id",
+      "from_club_id",
+      "to_club_id",
+      "fee_eur",
+      "mv_eur"
+    ],
+    "python": "3.13.16",
+    "pandas": "3.1.0",
+    "numpy": "2.5.4",
+    "finished_utc": "2026-10-27T20:37:43+00:00"
+  }
+}
