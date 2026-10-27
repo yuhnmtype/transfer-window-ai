@@ -44,6 +44,7 @@ club.**
 | Fee model | 206 test transfers | Criterion A failed (MdAPE ratio 1.242); 80% interval calibrated (coverage 0.801) | Only the fallback, market value x 1.25; the interval is kept as the allowed band |
 | LLM agents (blind) | 206 test transfers | Criterion A failed, did not beat the fallback (MdAPE ratio 1.348); criterion V passed (1.000) | No: the baseline policy (factor 1) is the default; the LLM policy is used only for the ablation |
 | Named-prompt diagnostic | 50 test transfers | Report only: MdAPE 0.308 against 0.357 for the blind prompts on the same rows | No: it gates nothing |
+| Window-level backtest of the fallback | 6 windows, S2023 to W2026 | Descriptive only, no pass/fail: MdAPE per window from 0.250 to 0.573 | No: it changes no parameter or default |
 
 Every model was evaluated the same way: the data filters, split, metrics and acceptance rules
 were written down and committed under a git tag **before** the evaluation script existed and
@@ -68,6 +69,10 @@ with the result. Full tables are in [`docs/results.md`](docs/results.md).
   MdAPE of 0.308 against 0.357 for the blind prompts on the same rows. The cause is not
   established, and leakage through the model's memory cannot be excluded, because the model's
   knowledge cutoff (March 2026) covers the whole test window.
+- **Window-level backtest** (`backtest-criteria-v1`, descriptive only): the fallback's MdAPE per
+  transfer window ranges from 0.250 (S2025) to 0.573 (W2024, 16 rows, low precision); most
+  bootstrap intervals overlap, so the table shows neither stability nor drift. It is not a
+  validation. See [`docs/results.md`](docs/results.md).
 
 What it means, as registered: the baseline policy (factor 1) stays the default in the
 negotiation engine, and the LLM policy is experimental and used only for the ablation. Nothing
@@ -173,6 +178,11 @@ Then open http://127.0.0.1:7860.
   (`seed/SOURCES.md`). Its headroom figures are therefore unreliable, and so is its place in
   the default buyer ranking; the demo shows a note whenever Tottenham is in a result.
 - SCR rules come from secondary sources; the Premier League Handbook text was not checked.
+- The SCR engine has not been validated against real outcomes: the finance seed is FY 2024/25
+  only and was published between December 2025 and May 2026, so it cannot be shown to be
+  point-in-time for any complete window in the data (S2023 to W2026; the repository does not
+  record filing dates per club), and the upstream dataset updates are paused (current to
+  6 July 2026 per the Kaggle page).
 - Current squads are approximated from the dataset (mean absolute difference of 3.55 players
   against official squads, `DATA_VERSION.md`).
 - Permanent deals only; loans and the GBE (work permit) rules are not implemented.
@@ -181,10 +191,12 @@ Then open http://127.0.0.1:7860.
 
 Done: data foundation, finance seed, SCR rules engine, one-deal advisor, outgoing-player
 amortisation helper, negotiation engine v1 with a rule-based baseline, pre-registered
-evaluations of the wage model, the fee model and the LLM agents, and a local Gradio demo.
+evaluations of the wage model, the fee model and the LLM agents, a local Gradio demo, and a
+limited descriptive window-level backtest of the fee fallback.
 
-Pending: a point-in-time backtest of past windows. Counter rounds, a player decision
-model and Monte Carlo runs for the negotiation engine are not started.
+Future work: a forward validation on the summer 2026 window, only if new data becomes
+available. Counter rounds, a player decision model and Monte Carlo runs for the negotiation
+engine are not started.
 
 ## License
 

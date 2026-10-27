@@ -215,7 +215,12 @@ Never present these as official figures.
   code commit a906af1, plus 30 in tests/test_demo_app.py (384 collected in the google-adk venv).
 - Local demo done: `src/demo_app.py` (Gradio, local only, baseline policy, no LLM, no API key),
   `tests/test_demo_app.py`, `requirements-demo.txt` (venv `.venv-demo`, Python 3.13).
-- Next: (e) limited point-in-time backtest.
+- Step (e) done: limited descriptive window-level backtest of the fee fallback. Criteria
+  `docs/backtest_criteria.md` frozen at tag backtest-criteria-v1 (commit 479783e); script
+  `src/phase3_eval_backtest.py` (commit 0b90f13); result `results/backtest_windows_run1.json`
+  (commit 3c4ecbf). Descriptive only, no pass/fail; MdAPE per window 0.250 to 0.573; results
+  in `docs/results.md`.
+- Next: small items only: demo console polish, README screenshots, Tottenham wage-bill check.
 - Backlog (not scheduled): loan support in deal_delta; GBE module (points table
   unverified); age multiplier for wages (only as an ablation); second sources for Fulham
   and West Ham; Companies House spot-check (Man City, Tottenham, Brighton); second source

@@ -148,6 +148,59 @@ test window (summer 2025 and January 2026).
 - Nothing is rerun or tuned on these results. Any new prompt experiment needs a new
   pre-registration and a new tag (`llm-criteria-v2`).
 
+## Window-level descriptive backtest (backtest-criteria-v1, run 1)
+
+Criteria: `docs/backtest_criteria.md`, tag `backtest-criteria-v1` (commit 479783e). Result:
+`results/backtest_windows_run1.json`, code commit 0b90f13. Descriptive only: no pass/fail
+criterion and no consequence for any default. Estimate: `fee_hat = m x MV_pit` with m = 1.25
+read from `results/fee_model_eval.json` (never refitted); bootstrap with 2,000 resamples,
+seed 20261027.
+
+| Window | Role | n | MdAPE | 95% bootstrap interval | Median fee / MV | Share APE <= 0.25 | Low precision |
+|---|---|---|---|---|---|---|---|
+| S2023 | train | 147 | 0.335 | [0.250, 0.417] | 1.200 | 0.449 | no |
+| W2024 | train | 16 | 0.573 | [0.475, 1.136] | 0.881 | 0.125 | yes |
+| S2024 | calibration | 153 | 0.364 | [0.252, 0.389] | 1.125 | 0.418 | no |
+| W2025 | calibration | 32 | 0.388 | [0.250, 0.604] | 1.500 | 0.375 | no |
+| S2025 | test | 177 | 0.250 | [0.216, 0.307] | 1.111 | 0.542 | no |
+| W2026 | test | 29 | 0.389 | [0.128, 0.819] | 1.160 | 0.483 | yes |
+
+S2026: 17 rows (count only; the window is incomplete and is not interpreted).
+
+Descriptive reading:
+- Most intervals overlap. The only non-overlapping pairs all involve W2024 (n = 16, low
+  precision): its interval [0.475, 1.136] does not overlap those of S2023, S2024 or S2025. The
+  table supports neither a claim of stability nor of drift, and no cause is claimed.
+- The registered test-split MdAPE of the fallback, 0.250, comes mostly from one window: S2025
+  holds 177 of the 206 test rows (MdAPE 0.250). The point estimates of the other five windows
+  are higher, from 0.335 to 0.573.
+- The train windows are in-sample for m, and their point estimates (S2023 0.335, W2024 0.573)
+  are not lower than that of S2025 (0.250).
+- W2024 and W2026 are flagged low precision (n < 30).
+
+Interpretation rules (verbatim from the criteria):
+
+- The table is descriptive only.
+- Windows with `n < 30` are flagged **low precision** (on the expected counts: W2024 and
+  W2026).
+- No claim of stability or drift is made beyond what the bootstrap intervals show;
+  overlapping intervals are not reported as evidence of stability, and non-overlapping
+  intervals are not reported as evidence of a cause.
+- No parameter (`m`, the 80% band of `fee-criteria-v1`) may be changed because of this table.
+- The test windows are reused for description only; this changes no registered conclusion of
+  the fee-model or LLM evaluations.
+- Train windows are in-sample for `m` and must not be read as out-of-sample performance.
+
+Limitations (verbatim from the criteria):
+
+- Descriptive only; window sizes are small, and two windows are below 30 rows.
+- Inherits the limitations of `docs/fee_model_criteria.md`: fee > 0 only (conditional on a fee
+  being paid), selection bias (transfers involving the 20 clubs of the 2025/26 Premier League
+  only), position from current data, no point-in-time contract length, possible fee
+  inflation over time, heuristic loan filter.
+- The train windows are in-sample for `m`; the test windows have already been used.
+- Point-in-time market values can be up to 365 days old.
+
 ## Provenance
 
 | Item | Value | Source |
