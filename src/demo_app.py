@@ -226,17 +226,27 @@ def negotiation_view(ctx, seller_id, player_id, rule):
 
 # ---------- UI ----------
 
+def guard_errors(fn, ui_error):
+    """Wrap a UI callback so user errors become ui_error (gr.Error in the app) with the same
+    message. A DemoInputError is an expected user mistake, so its context is suppressed
+    (from None); any other ValueError or LookupError keeps the original as __cause__.
+    DemoInputError is a ValueError subclass, so its clause must come first."""
+    def wrapper(*args):
+        try:
+            return fn(*args)
+        except DemoInputError as error:
+            raise ui_error(str(error)) from None
+        except (ValueError, LookupError) as error:
+            raise ui_error(str(error)) from error
+    return wrapper
+
+
 def build_ui(ctx):
     """The Gradio app (not launched here). gradio is imported only when the UI is built."""
     import gradio as gr
 
     def guarded(fn):
-        def wrapper(*args):
-            try:
-                return fn(*args)
-            except (DemoInputError, ValueError, LookupError) as error:
-                raise gr.Error(str(error))
-        return wrapper
+        return guard_errors(fn, gr.Error)
 
     with gr.Blocks(title="Transfer Window AI demo", analytics_enabled=False) as app:
         gr.Markdown(PAGE_HEADER)

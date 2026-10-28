@@ -216,8 +216,8 @@ Never present these as official figures.
   leakage not excluded. As registered: the baseline policy (factor 1) stays the default; the
   LLM policy is experimental and used only for the ablation; any new prompt experiment needs
   llm-criteria-v2.
-- Public documentation: README rewritten; full numbers in `docs/results.md`. 354 tests as of
-  code commit a906af1, plus 30 in tests/test_demo_app.py (384 collected in the google-adk venv).
+- Public documentation: README rewritten; full numbers in `docs/results.md`. 417 tests
+  collected on 2026-10-28 (same in .venv-adk and .venv-demo; 37 in tests/test_demo_app.py).
 - Local demo done: `src/demo_app.py` (Gradio, local only, baseline policy, no LLM, no API key),
   `tests/test_demo_app.py`, `requirements-demo.txt` (venv `.venv-demo`, Python 3.13).
 - Step (e) done: limited descriptive window-level backtest of the fee fallback. Criteria
@@ -225,7 +225,8 @@ Never present these as official figures.
   `src/phase3_eval_backtest.py` (commit 0b90f13); result `results/backtest_windows_run1.json`
   (commit 3c4ecbf). Descriptive only, no pass/fail; MdAPE per window 0.250 to 0.573; results
   in `docs/results.md`.
-- Next: small items only: demo console polish.
+- Next: UI polish and a few frontend plugins, then a final README pass; see Backlog for the
+  rest.
 - Backlog (not scheduled): loan support in deal_delta; GBE module (points table
   unverified); age multiplier for wages (only as an ablation); second sources for Fulham
   and West Ham; Companies House spot-check (Man City, Brighton); second source

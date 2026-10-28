@@ -184,6 +184,67 @@ def test_source_has_no_key_or_environment_access():
     assert "BaselinePolicy()" in source
 
 
+# ---------- Error wrapper used by the UI callbacks ----------
+
+class FakeUIError(Exception):
+    """Stands in for gr.Error so these tests also run without gradio."""
+
+
+def _raises(error):
+    def fn(*_):
+        raise error
+    return fn
+
+
+def test_guard_errors_passes_results_through():
+    assert demo.guard_errors(lambda a, b: a + b, FakeUIError)(2, 3) == 5
+
+
+def test_guard_errors_demo_input_error_has_no_chained_context():
+    with pytest.raises(FakeUIError, match="^Enter the fee.$") as exc:
+        demo.guard_errors(_raises(demo.DemoInputError("Enter the fee.")), FakeUIError)()
+    assert exc.value.__cause__ is None
+    assert exc.value.__suppress_context__ is True
+
+
+@pytest.mark.parametrize("original", [ValueError("bad value"), LookupError("no such row")])
+def test_guard_errors_other_errors_keep_the_cause(original):
+    with pytest.raises(FakeUIError, match=f"^{original}$") as exc:
+        demo.guard_errors(_raises(original), FakeUIError)()
+    assert exc.value.__cause__ is original
+
+
+def test_guard_errors_does_not_catch_other_exceptions():
+    # RuntimeError is neither a ValueError nor a LookupError (KeyError would be: it is a
+    # LookupError subclass), so it is not turned into a UI error.
+    with pytest.raises(RuntimeError):
+        demo.guard_errors(_raises(RuntimeError("x")), FakeUIError)()
+
+
+def test_guard_errors_with_gr_error():
+    gr = pytest.importorskip("gradio")
+    with pytest.raises(gr.Error) as exc:
+        demo.guard_errors(_raises(demo.DemoInputError("Enter the fee.")), gr.Error)()
+    assert exc.value.message == "Enter the fee."
+    assert exc.value.__cause__ is None and exc.value.__suppress_context__ is True
+    for original in (ValueError("bad value"), LookupError("no such row")):
+        with pytest.raises(gr.Error) as exc:
+            demo.guard_errors(_raises(original), gr.Error)()
+        assert exc.value.message == str(original)
+        assert exc.value.__cause__ is original
+
+
+def test_advise_button_handler_uses_the_wrapper(ctx):
+    pytest.importorskip("gradio")
+    import gradio as gr
+    app = demo.build_ui(ctx)
+    handler = next(f.fn for f in app.fns.values() if len(f.inputs) == 8)   # Advise button
+    with pytest.raises(gr.Error) as exc:
+        handler(1, None, "GBP", 3.0, 4, None, None, None)
+    assert exc.value.message == "Enter the fee."
+    assert exc.value.__cause__ is None and exc.value.__suppress_context__ is True
+
+
 # ---------- UI (only when gradio is installed) ----------
 
 def test_build_ui_without_launching(ctx):

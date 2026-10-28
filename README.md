@@ -152,9 +152,9 @@ row was checked against the filed accounts (see Limitations).
   its cached response.
 - Each result file has a provenance block: code commit, tag commit, data checksums or the
   fee-results checksum, library versions, seeds and generation settings.
-- The test suite has 354 tests as of code commit a906af1, plus 30 in `tests/test_demo_app.py`
-  (384 collected in the google-adk venv); they use synthetic data and a fake model, and never
-  read the real test split.
+- The test suite has 417 tests (from a `pytest --collect-only` run on 2026-10-28, in both the
+  google-adk venv and the demo venv; tests that need a package missing from a venv are skipped
+  there). They use synthetic data and a fake model, and never read the real test split.
 
 ## Data and provenance
 
