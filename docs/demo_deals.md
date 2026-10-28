@@ -4,7 +4,7 @@ Two illustrative runs of the v1 negotiation engine (baseline policy, one round o
 no LLM). They are illustrations, not real-world conclusions.
 
 Code: negotiation engine commit `83a8002`, demo picker commit `b1ff200`. The outputs below were
-produced from commit `b1ff200` on a clean working tree. The runs are read-only and
+produced from commit `723192e` on a clean working tree. The runs are read-only and
 deterministic.
 
 ## How the deals were chosen
@@ -37,9 +37,11 @@ The headline result is the **set of buyers that can afford the reserve** under e
 scenario. The winner among them is decided by the tie-break (smaller `club_id`) and has no
 economic meaning. Prices equal the fallback reserve (market value x 1.25, read from
 `results/fee_model_eval.json`) by construction; they are not market price forecasts. Wages are
-illustrative shares of market value, not estimates. Tottenham's large headroom rests on a wage
-bill that is ambiguous (about 256m at football-company level vs about 402m at group level), so
-its position in the default buyer list is uncertain.
+illustrative shares of market value, not estimates. The Tottenham Hotspur finance row was
+checked against its filed FY 2024/25 consolidated accounts (see `seed/SOURCES.md`); its 256m
+wage bill is group-wide staff costs, including stadium and retail staff, so it overstates squad
+cost. Tottenham's large max fee is an SCR headroom ceiling (headroom multiplied by the assumed
+contract length), not a prediction and not a cash check.
 
 ## Deal 1: Abdukodir Khusanov (Manchester City)
 
@@ -72,21 +74,21 @@ Rule: buyer must stay green. Contract 5 years (assumption); agent fee 0.0 (assum
 === Wage scenario 5% of market value (2.15m GBP a year, illustrative, not estimated) ===
 Buyers that can afford the reserve: Tottenham Hotspur, Arsenal FC
   buyer                     before  headroom   max fee      bid  binding
-  Tottenham Hotspur          green    127.04    624.47    53.75  valuation
+  Tottenham Hotspur          green    127.21    625.32    53.75  valuation
   Arsenal FC                 green     21.54     96.95    53.75  valuation
 Deal: yes. Winner Arsenal FC at 53.75m GBP (won_by_tiebreak: yes, tied with [148]); status green -> green, headroom 21.54 -> 8.64
 
 === Wage scenario 10% of market value (4.30m GBP a year, illustrative, not estimated) ===
 Buyers that can afford the reserve: Tottenham Hotspur, Arsenal FC
   buyer                     before  headroom   max fee      bid  binding
-  Tottenham Hotspur          green    127.04    613.72    53.75  valuation
+  Tottenham Hotspur          green    127.21    614.57    53.75  valuation
   Arsenal FC                 green     21.54     86.20    53.75  valuation
 Deal: yes. Winner Arsenal FC at 53.75m GBP (won_by_tiebreak: yes, tied with [148]); status green -> green, headroom 21.54 -> 6.49
 
 === Wage scenario 15% of market value (6.45m GBP a year, illustrative, not estimated) ===
 Buyers that can afford the reserve: Tottenham Hotspur, Arsenal FC
   buyer                     before  headroom   max fee      bid  binding
-  Tottenham Hotspur          green    127.04    602.97    53.75  valuation
+  Tottenham Hotspur          green    127.21    603.82    53.75  valuation
   Arsenal FC                 green     21.54     75.45    53.75  valuation
 Deal: yes. Winner Arsenal FC at 53.75m GBP (won_by_tiebreak: yes, tied with [148]); status green -> green, headroom 21.54 -> 4.34
 
@@ -95,15 +97,15 @@ Log:
   Reserve = valuation = 1.25 x MV = 62.50m EUR = 53.75m GBP (fallback: market value x training median ratio).
   Buyers (default: largest headroom to green, excluding Championship-revenue clubs and clubs already above the limit): [148, 11]. Acceptance rule: green.
   Scenario wage = 5% of MV = 2.15m GBP a year (illustrative, not estimated).
-    Tottenham Hotspur: headroom to green limit 127.04, max fee 624.47, binding valuation, bid 53.75.
+    Tottenham Hotspur: headroom to green limit 127.21, max fee 625.32, binding valuation, bid 53.75.
     Arsenal FC: headroom to green limit 21.54, max fee 96.95, binding valuation, bid 53.75.
     Affordable: ['Tottenham Hotspur', 'Arsenal FC']. Winner Arsenal FC at 53.75m GBP (won_by_tiebreak=True).
   Scenario wage = 10% of MV = 4.30m GBP a year (illustrative, not estimated).
-    Tottenham Hotspur: headroom to green limit 127.04, max fee 613.72, binding valuation, bid 53.75.
+    Tottenham Hotspur: headroom to green limit 127.21, max fee 614.57, binding valuation, bid 53.75.
     Arsenal FC: headroom to green limit 21.54, max fee 86.20, binding valuation, bid 53.75.
     Affordable: ['Tottenham Hotspur', 'Arsenal FC']. Winner Arsenal FC at 53.75m GBP (won_by_tiebreak=True).
   Scenario wage = 15% of MV = 6.45m GBP a year (illustrative, not estimated).
-    Tottenham Hotspur: headroom to green limit 127.04, max fee 602.97, binding valuation, bid 53.75.
+    Tottenham Hotspur: headroom to green limit 127.21, max fee 603.82, binding valuation, bid 53.75.
     Arsenal FC: headroom to green limit 21.54, max fee 75.45, binding valuation, bid 53.75.
     Affordable: ['Tottenham Hotspur', 'Arsenal FC']. Winner Arsenal FC at 53.75m GBP (won_by_tiebreak=True).
 
@@ -138,38 +140,38 @@ Rule: buyer must stay green. Contract 5 years (assumption); agent fee 0.0 (assum
 === Wage scenario 5% of market value (3.44m GBP a year, illustrative, not estimated) ===
 Buyers that can afford the reserve: Tottenham Hotspur, Arsenal FC
   buyer                     before  headroom   max fee      bid  binding
-  Tottenham Hotspur          green    127.04    618.02    86.00  valuation
+  Tottenham Hotspur          green    127.21    618.87    86.00  valuation
   Arsenal FC                 green     21.54     90.50    86.00  valuation
 Deal: yes. Winner Arsenal FC at 86.00m GBP (won_by_tiebreak: yes, tied with [148]); status green -> green, headroom 21.54 -> 0.90
 
 === Wage scenario 10% of market value (6.88m GBP a year, illustrative, not estimated) ===
 Buyers that can afford the reserve: Tottenham Hotspur
   buyer                     before  headroom   max fee      bid  binding
-  Tottenham Hotspur          green    127.04    600.82    86.00  valuation
+  Tottenham Hotspur          green    127.21    601.67    86.00  valuation
   Arsenal FC                 green     21.54     73.30        -  SCR
-Deal: yes. Winner Tottenham Hotspur at 86.00m GBP (won_by_tiebreak: no); status green -> green, headroom 127.04 -> 102.96
+Deal: yes. Winner Tottenham Hotspur at 86.00m GBP (won_by_tiebreak: no); status green -> green, headroom 127.21 -> 103.13
 
 === Wage scenario 15% of market value (10.32m GBP a year, illustrative, not estimated) ===
 Buyers that can afford the reserve: Tottenham Hotspur
   buyer                     before  headroom   max fee      bid  binding
-  Tottenham Hotspur          green    127.04    583.62    86.00  valuation
+  Tottenham Hotspur          green    127.21    584.47    86.00  valuation
   Arsenal FC                 green     21.54     56.10        -  SCR
-Deal: yes. Winner Tottenham Hotspur at 86.00m GBP (won_by_tiebreak: no); status green -> green, headroom 127.04 -> 99.52
+Deal: yes. Winner Tottenham Hotspur at 86.00m GBP (won_by_tiebreak: no); status green -> green, headroom 127.21 -> 99.69
 
 Log:
   Player Sandro Tonali (player_id 397033) at Newcastle United; market value 80.00m EUR on 2026-06-03.
   Reserve = valuation = 1.25 x MV = 100.00m EUR = 86.00m GBP (fallback: market value x training median ratio).
   Buyers (default: largest headroom to green, excluding Championship-revenue clubs and clubs already above the limit): [148, 11]. Acceptance rule: green.
   Scenario wage = 5% of MV = 3.44m GBP a year (illustrative, not estimated).
-    Tottenham Hotspur: headroom to green limit 127.04, max fee 618.02, binding valuation, bid 86.00.
+    Tottenham Hotspur: headroom to green limit 127.21, max fee 618.87, binding valuation, bid 86.00.
     Arsenal FC: headroom to green limit 21.54, max fee 90.50, binding valuation, bid 86.00.
     Affordable: ['Tottenham Hotspur', 'Arsenal FC']. Winner Arsenal FC at 86.00m GBP (won_by_tiebreak=True).
   Scenario wage = 10% of MV = 6.88m GBP a year (illustrative, not estimated).
-    Tottenham Hotspur: headroom to green limit 127.04, max fee 600.82, binding valuation, bid 86.00.
+    Tottenham Hotspur: headroom to green limit 127.21, max fee 601.67, binding valuation, bid 86.00.
     Arsenal FC: headroom to green limit 21.54, max fee 73.30, binding SCR, bid none.
     Affordable: ['Tottenham Hotspur']. Winner Tottenham Hotspur at 86.00m GBP (won_by_tiebreak=False).
   Scenario wage = 15% of MV = 10.32m GBP a year (illustrative, not estimated).
-    Tottenham Hotspur: headroom to green limit 127.04, max fee 583.62, binding valuation, bid 86.00.
+    Tottenham Hotspur: headroom to green limit 127.21, max fee 584.47, binding valuation, bid 86.00.
     Arsenal FC: headroom to green limit 21.54, max fee 56.10, binding SCR, bid none.
     Affordable: ['Tottenham Hotspur']. Winner Tottenham Hotspur at 86.00m GBP (won_by_tiebreak=False).
 
