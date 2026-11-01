@@ -104,6 +104,39 @@ def squad_choices(ctx, seller_id):
     return choices
 
 
+# First-load examples, used only when present in the data. Advisor: the README example
+# (README.md "How to run": advise_cli.py --club-id 1148 --fee 20 --fee-currency GBP
+# --wage-gbp-m 3 --contract-years 4). Negotiation: docs/demo_deals.md Deal 1 (Khusanov).
+EXAMPLE_ADVISOR = {"club_id": 1148, "fee": 20, "currency": "GBP", "wage_gbp_m": 3,
+                   "contract_years": 4}
+EXAMPLE_SELLER_ID = 281
+EXAMPLE_PLAYER_ID = 763079
+FALLBACK_CONTRACT_YEARS = 5   # the form's previous default, kept when the example is absent
+
+
+def default_form_values(ctx):
+    """Choices and first-load values for both tabs (no gradio). The examples are used only
+    when they exist in the data; otherwise the Advisor keeps its previous defaults (first
+    buyer, empty fee and wage) and the Negotiation shows the first seller's squad with no
+    player selected."""
+    buyers, sellers = buyer_choices(ctx), seller_choices(ctx)
+    if EXAMPLE_ADVISOR["club_id"] in {v for _, v in buyers}:
+        advisor = dict(EXAMPLE_ADVISOR)
+    else:
+        advisor = {"club_id": buyers[0][1] if buyers else None, "fee": None,
+                   "currency": DEFAULT_CURRENCY, "wage_gbp_m": None,
+                   "contract_years": FALLBACK_CONTRACT_YEARS}
+    seller_ids = [v for _, v in sellers]
+    seller_id = (EXAMPLE_SELLER_ID if EXAMPLE_SELLER_ID in seller_ids
+                 else seller_ids[0] if seller_ids else None)
+    players = squad_choices(ctx, seller_id)
+    player_id = (EXAMPLE_PLAYER_ID if seller_id == EXAMPLE_SELLER_ID
+                 and EXAMPLE_PLAYER_ID in {v for _, v in players} else None)
+    return {"advisor": {**advisor, "club_choices": buyers},
+            "negotiation": {"seller_id": seller_id, "seller_choices": sellers,
+                            "player_id": player_id, "player_choices": players}}
+
+
 class _conn:
     """Read-only connection for one request (SQLite connections stay in one thread)."""
 
@@ -248,16 +281,20 @@ def build_ui(ctx):
     def guarded(fn):
         return guard_errors(fn, gr.Error)
 
+    defaults = default_form_values(ctx)
+    adv, neg = defaults["advisor"], defaults["negotiation"]
+
     with gr.Blocks(title="Transfer Window AI demo", analytics_enabled=False) as app:
         gr.Markdown(PAGE_HEADER)
         with gr.Tab("Advisor"):
             gr.Markdown(BUYER_NOTE)
-            club = gr.Dropdown(buyer_choices(ctx), label="Buyer club")
+            club = gr.Dropdown(adv["club_choices"], value=adv["club_id"], label="Buyer club")
             with gr.Row():
-                fee = gr.Number(label="Fee (millions)", minimum=0)
-                currency = gr.Radio(["GBP", "EUR"], value=DEFAULT_CURRENCY, label="Fee currency")
-                wage = gr.Number(label="Incoming annual wage (GBP m)", minimum=0)
-                years = gr.Number(label="Contract years", value=5, minimum=1)
+                fee = gr.Number(label="Fee (millions)", value=adv["fee"], minimum=0)
+                currency = gr.Radio(["GBP", "EUR"], value=adv["currency"], label="Fee currency")
+                wage = gr.Number(label="Incoming annual wage (GBP m)", value=adv["wage_gbp_m"],
+                                 minimum=0)
+                years = gr.Number(label="Contract years", value=adv["contract_years"], minimum=1)
             with gr.Accordion("Optional outgoing player", open=False):
                 out_player = gr.Number(label="Outgoing player_id (estimate amortisation)",
                                        precision=0)
@@ -272,8 +309,10 @@ def build_ui(ctx):
 
         with gr.Tab("Negotiation"):
             gr.Markdown(SELLER_NOTE)
-            seller = gr.Dropdown(seller_choices(ctx), label="Seller club")
-            player = gr.Dropdown([], label="Player (current squad)")
+            seller = gr.Dropdown(neg["seller_choices"], value=neg["seller_id"],
+                                 label="Seller club")
+            player = gr.Dropdown(neg["player_choices"], value=neg["player_id"],
+                                 label="Player (current squad)")
             rule = gr.Radio([("green", "green"), ("not red", "not_red")], value="green",
                             label="Acceptance rule for buyers")
             run = gr.Button("Run one round of sealed bids (baseline policy)")

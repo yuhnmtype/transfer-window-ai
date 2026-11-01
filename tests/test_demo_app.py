@@ -161,6 +161,62 @@ def test_choices(ctx):
     assert demo.squad_choices(ctx, None) == []
 
 
+# ---------- First-load defaults ----------
+
+def use_fixture_examples(monkeypatch, club_id=1, seller_id=9, player_id=100):
+    """Point the example constants at fixture ids (the real ids 1148/281/763079 are absent)."""
+    monkeypatch.setattr(demo, "EXAMPLE_ADVISOR", {**demo.EXAMPLE_ADVISOR, "club_id": club_id})
+    monkeypatch.setattr(demo, "EXAMPLE_SELLER_ID", seller_id)
+    monkeypatch.setattr(demo, "EXAMPLE_PLAYER_ID", player_id)
+
+
+def test_example_constants_match_the_documented_deals():
+    # README.md "How to run" advise_cli example; docs/demo_deals.md Deal 1
+    assert demo.EXAMPLE_ADVISOR == {"club_id": 1148, "fee": 20, "currency": "GBP",
+                                    "wage_gbp_m": 3, "contract_years": 4}
+    assert (demo.EXAMPLE_SELLER_ID, demo.EXAMPLE_PLAYER_ID) == (281, 763079)
+
+
+def test_defaults_use_the_examples_when_present(ctx, monkeypatch):
+    use_fixture_examples(monkeypatch)
+    d = demo.default_form_values(ctx)
+    adv, neg = d["advisor"], d["negotiation"]
+    assert {k: adv[k] for k in ("club_id", "fee", "currency", "wage_gbp_m", "contract_years")} \
+        == {"club_id": 1, "fee": 20, "currency": "GBP", "wage_gbp_m": 3, "contract_years": 4}
+    assert (neg["seller_id"], neg["player_id"]) == (9, 100)
+    assert neg["player_choices"] == demo.squad_choices(ctx, 9)
+
+
+def test_defaults_fall_back_when_the_examples_are_absent(ctx):
+    # The fixture has neither club 1148 nor seller 281
+    d = demo.default_form_values(ctx)
+    adv, neg = d["advisor"], d["negotiation"]
+    first_buyer = demo.buyer_choices(ctx)[0][1]
+    assert {k: adv[k] for k in ("club_id", "fee", "currency", "wage_gbp_m", "contract_years")} \
+        == {"club_id": first_buyer, "fee": None, "currency": "GBP", "wage_gbp_m": None,
+            "contract_years": 5}
+    first_seller = demo.seller_choices(ctx)[0][1]
+    assert neg["seller_id"] == first_seller
+    assert neg["player_choices"] == demo.squad_choices(ctx, first_seller)
+    assert neg["player_id"] is None
+
+
+def test_defaults_leave_the_player_unselected_when_the_example_player_is_absent(ctx,
+                                                                               monkeypatch):
+    use_fixture_examples(monkeypatch, player_id=999)
+    neg = demo.default_form_values(ctx)["negotiation"]
+    assert (neg["seller_id"], neg["player_id"]) == (9, None)
+    assert [v for _, v in neg["player_choices"]] == [100]
+
+
+def test_advisor_defaults_produce_a_report(ctx, monkeypatch):
+    use_fixture_examples(monkeypatch)
+    adv = demo.default_form_values(ctx)["advisor"]
+    out = demo.advisor_view(ctx, adv["club_id"], adv["fee"], adv["currency"],
+                            adv["wage_gbp_m"], adv["contract_years"])
+    assert "SCR advice: Alpha FC (club_id 1)" in out
+
+
 # ---------- No language model, no key ----------
 
 def _modules_after(code):
@@ -255,6 +311,42 @@ def test_build_ui_without_launching(ctx):
     radio = next(c for c in components if getattr(c, "label", None) == "Fee currency")
     assert radio.value == "GBP"
     assert any(getattr(c, "value", None) == demo.PAGE_HEADER for c in components)
+
+
+def _component(app, label):
+    return next(c for c in app.blocks.values() if getattr(c, "label", None) == label)
+
+
+def test_build_ui_player_list_is_filled_on_first_load(ctx, monkeypatch):
+    pytest.importorskip("gradio")
+    use_fixture_examples(monkeypatch)
+    app = demo.build_ui(ctx)
+    seller, player = _component(app, "Seller club"), _component(app, "Player (current squad)")
+    assert seller.value == 9
+    assert [v for _, v in player.choices] == [100]
+    assert player.value == 100
+
+
+def test_build_ui_fallback_shows_the_first_sellers_squad(ctx):
+    pytest.importorskip("gradio")
+    app = demo.build_ui(ctx)
+    first_seller = demo.seller_choices(ctx)[0][1]
+    assert _component(app, "Seller club").value == first_seller
+    player = _component(app, "Player (current squad)")
+    assert [v for _, v in player.choices] == [v for _, v in demo.squad_choices(ctx, first_seller)]
+    assert player.value is None
+
+
+def test_advise_handler_with_the_defaults_returns_a_report(ctx, monkeypatch):
+    pytest.importorskip("gradio")
+    use_fixture_examples(monkeypatch)
+    app = demo.build_ui(ctx)
+    handler = next(f.fn for f in app.fns.values() if len(f.inputs) == 8)   # Advise button
+    values = [_component(app, label).value for label in (
+        "Buyer club", "Fee (millions)", "Fee currency", "Incoming annual wage (GBP m)",
+        "Contract years")]
+    assert values == [1, 20, "GBP", 3, 4]
+    assert "SCR advice: Alpha FC (club_id 1)" in handler(*values, None, None, None)
 
 
 def test_importing_the_app_with_gradio_loads_no_llm_modules():
