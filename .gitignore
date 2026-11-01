@@ -228,3 +228,8 @@ data/
 # Third-party agent skills (not part of this project)
 .agents/
 skills-lock.json
+.claude/skills/playwright-cli/
+
+# Playwright CLI local config and output (may contain credentials)
+.playwright-cli/
+.playwright/
