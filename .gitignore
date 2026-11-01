@@ -224,3 +224,7 @@ __marimo__/
 *.db
 *.duckdb
 data/
+
+# Third-party agent skills (not part of this project)
+.agents/
+skills-lock.json
