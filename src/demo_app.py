@@ -257,6 +257,194 @@ def negotiation_view(ctx, seller_id, player_id, rule):
             [_scenario_markdown(s, result) for s in result["scenarios"]])
 
 
+# ---------- Look and feel (Gradio 6 takes theme, css and js in launch(), not in Blocks()) ----
+
+SANS_FONTS = ["ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "Helvetica",
+              "Arial", "sans-serif"]
+MONO_FONTS = ["ui-monospace", "Cascadia Code", "Consolas", "monospace"]
+
+# The only colour definitions: light values on :root, dark values under .dark (Gradio puts the
+# dark class on <body>). No external fonts, images or imports.
+CSS = """
+:root {
+  color-scheme: light;
+  --twai-page: #F6F8FB;
+  --twai-card: #FFFFFF;
+  --twai-border: #D5DDE8;
+  --twai-input-border: #7A8AA0;
+  --twai-text: #1E293B;
+  --twai-muted: #586579;
+  --twai-accent: #2457C5;
+  --twai-on-accent: #FFFFFF;
+  --twai-callout: #EAF1FD;
+  --twai-button: #2457C5;
+  --twai-button-hover: #1E4BAE;
+  --twai-button-active: #1A4096;
+  --twai-on-button: #FFFFFF;
+}
+/* Gradio puts the dark class on <body>; :has() also switches <html>, so values that Gradio
+   resolves on :root (its own body rule in index.html) follow the theme. */
+:root.dark, .dark, :root:has(body.dark) {
+  color-scheme: dark;
+  --twai-page: #11161D;
+  --twai-card: #1A212B;
+  --twai-border: #2C3644;
+  --twai-input-border: #6B7A8F;
+  --twai-text: #D3DAE3;
+  --twai-muted: #9AA7B8;
+  --twai-accent: #78AEF5;
+  --twai-on-accent: #0E1622;
+  --twai-callout: #16263F;
+  --twai-button: #3566C9;
+  --twai-button-hover: #3B6FD4;
+  --twai-button-active: #2F5DB8;
+  --twai-on-button: #FFFFFF;
+}
+
+/* Gradio's index.html sets body background/colour from values resolved on :root and switches
+   them only with prefers-color-scheme, not with ?__theme; html body beats its body selector. */
+html body, .gradio-container { background: var(--twai-page); color: var(--twai-text); }
+
+.gradio-container h1, .gradio-container h2, .gradio-container h3 { text-wrap: balance; }
+
+/* The "Illustrative only" banner and the notes are Markdown blockquotes: show them as callouts */
+.twai-header blockquote, .twai-result blockquote {
+  background: var(--twai-callout);
+  border-left: 4px solid var(--twai-accent);
+  border-radius: 6px;
+  color: var(--twai-text);
+  margin: 0.5rem 0;
+  padding: 0.6rem 0.9rem;
+}
+.twai-note { color: var(--twai-muted); }
+
+/* Advisor report: the text code fence becomes a bordered card */
+.twai-report pre {
+  background: var(--twai-card);
+  border: 1px solid var(--twai-border);
+  border-radius: 8px;
+  color: var(--twai-text);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  overflow-x: auto;
+  padding: 0.9rem 1rem;
+}
+.twai-report pre code { background: transparent; font-variant-numeric: tabular-nums; }
+
+/* Three scenarios: as many columns as fit at 320px or more, one column on a phone.
+   .gradio-container .row.twai-scenarios beats Gradio's div.svelte-* flex rule for Row. */
+.gradio-container .row.twai-scenarios {
+  display: grid;
+  gap: var(--layout-gap);
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+}
+.gradio-container .row.twai-scenarios > * { min-width: 0; }
+
+/* Scenario tables: Buyer | Max fee (GBP m) | Binding | Bid; columns 2 and 4 are numbers.
+   Gradio's Markdown lets table text break inside words; break only at spaces here, and
+   scroll sideways as a last resort. */
+.gradio-container .twai-scenario { overflow-x: auto; }
+.gradio-container .twai-scenario table {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: normal;
+  width: 100%;
+  word-break: normal;
+}
+.gradio-container .twai-scenario th, .gradio-container .twai-scenario td {
+  border: 1px solid var(--twai-border);
+  padding: clamp(0.25rem, 0.8vw, 0.35rem) clamp(0.35rem, 1.2vw, 0.6rem);
+}
+.gradio-container .twai-scenario th { background: var(--twai-callout); }
+.gradio-container .twai-scenario th:nth-child(n+2), .gradio-container .twai-scenario td:nth-child(n+2) {
+  white-space: nowrap;
+}
+.gradio-container .twai-scenario th:nth-child(2), .gradio-container .twai-scenario td:nth-child(2),
+.gradio-container .twai-scenario th:nth-child(4), .gradio-container .twai-scenario td:nth-child(4) {
+  text-align: right;
+}
+
+/* Interaction */
+.gradio-container :focus-visible { outline: 2px solid var(--twai-accent); outline-offset: 2px; }
+.gradio-container button { touch-action: manipulation; }
+.gradio-container button:hover:not(:disabled):not(.primary) { border-color: var(--twai-accent); }
+.gradio-container button:active:not(:disabled):not(.primary) { opacity: 0.85; }
+.gradio-container button.primary:active:not(:disabled) { background: var(--twai-button-active); }
+.gradio-container select { background-color: var(--twai-card); color: var(--twai-text); }
+/* Gradio draws the dropdown box on .wrap with the pale border-color-primary; use the input
+   border like number inputs. Structure seen in the live DOM: div.container > div.wrap >
+   div.wrap-inner. (0,4,0) beats Gradio's .container.svelte-* .wrap (0,3,0). */
+.gradio-container .container .wrap:has(> .wrap-inner) { border-color: var(--twai-input-border); }
+.gradio-container .container .wrap:has(> .wrap-inner):focus-within {
+  border-color: var(--input-border-color-focus);
+}
+@media (prefers-reduced-motion: reduce) {
+  .gradio-container *, .gradio-container *::before, .gradio-container *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.twai-toolbar { justify-content: flex-end; }
+"""
+
+# Theme toggle: set __theme to the opposite of the current mode and reload (the same URL
+# parameter Gradio's own Settings panel uses). Nothing is stored in the browser.
+TOGGLE_JS = """() => {
+  const url = new URL(window.location.href);
+  url.searchParams.set("__theme", document.body.classList.contains("dark") ? "light" : "dark");
+  window.location.href = url.toString();
+}"""
+
+# Runs once on page load: report the current mode on the toggle (no-op if it is not found).
+PAGE_JS = """() => {
+  const el = document.getElementById("twai-theme-toggle");
+  const button = el && (el.tagName === "BUTTON" ? el : el.querySelector("button"));
+  if (button) button.setAttribute("aria-pressed", String(document.body.classList.contains("dark")));
+}"""
+
+# Gradio theme variables mapped onto the tokens; the same expression serves both modes because
+# the tokens themselves switch under .dark.
+THEME_VARS = {
+    "body_background_fill": "var(--twai-page)",
+    "background_fill_primary": "var(--twai-card)",
+    "background_fill_secondary": "var(--twai-page)",
+    "block_background_fill": "var(--twai-card)",
+    "block_border_color": "var(--twai-border)",
+    "border_color_primary": "var(--twai-border)",
+    # Inputs sit on a card, so they take the page colour; Base defaults input_border_width to 0px.
+    "input_background_fill": "var(--twai-page)",
+    "input_border_color": "var(--twai-input-border)",
+    "input_border_color_focus": "var(--twai-accent)",
+    "input_border_width": "1px",
+    "body_text_color": "var(--twai-text)",
+    "body_text_color_subdued": "var(--twai-muted)",
+    "color_accent_soft": "var(--twai-callout)",
+    "link_text_color": "var(--twai-accent)",
+    # Buttons have their own tokens: the dark accent is too bright as a fill.
+    "button_primary_background_fill": "var(--twai-button)",
+    "button_primary_background_fill_hover": "var(--twai-button-hover)",
+    "button_primary_border_color": "var(--twai-button)",
+    "button_primary_border_color_hover": "var(--twai-button-hover)",
+    "button_primary_text_color": "var(--twai-on-button)",
+    "button_primary_text_color_hover": "var(--twai-on-button)",
+}
+
+
+def make_theme():
+    """A plain Base theme with system fonts; colours come from the CSS tokens."""
+    import gradio as gr
+    dark = {f"{name}_dark": value for name, value in THEME_VARS.items()}
+    return gr.themes.Base(font=SANS_FONTS, font_mono=MONO_FONTS).set(
+        color_accent="var(--twai-accent)", **THEME_VARS, **dark)
+
+
+def launch_kwargs():
+    return {"theme": make_theme(), "css": CSS, "js": PAGE_JS}
+
+
 # ---------- UI ----------
 
 def guard_errors(fn, ui_error):
@@ -285,9 +473,13 @@ def build_ui(ctx):
     adv, neg = defaults["advisor"], defaults["negotiation"]
 
     with gr.Blocks(title="Transfer Window AI demo", analytics_enabled=False) as app:
-        gr.Markdown(PAGE_HEADER)
+        gr.Markdown(PAGE_HEADER, elem_classes=["twai-header"])
+        with gr.Row(elem_classes=["twai-toolbar"]):
+            toggle = gr.Button("Switch light / dark theme", size="sm", variant="secondary",
+                               scale=0, elem_id="twai-theme-toggle")
+        toggle.click(fn=None, js=TOGGLE_JS)
         with gr.Tab("Advisor"):
-            gr.Markdown(BUYER_NOTE)
+            gr.Markdown(BUYER_NOTE, elem_classes=["twai-note"])
             club = gr.Dropdown(adv["club_choices"], value=adv["club_id"], label="Buyer club")
             with gr.Row():
                 fee = gr.Number(label="Fee (millions)", value=adv["fee"], minimum=0)
@@ -301,24 +493,25 @@ def build_ui(ctx):
                 out_wage = gr.Number(label="Outgoing annual wage (GBP m)")
                 out_amort = gr.Number(label="Outgoing annual amortisation (GBP m, overrides "
                                             "the estimate)")
-            advise = gr.Button("Advise")
-            advice_out = gr.Markdown(f"> **{BANNER}**")
+            advise = gr.Button("Advise", variant="primary")
+            advice_out = gr.Markdown(f"> **{BANNER}**", elem_classes=["twai-result", "twai-report"])
             advise.click(guarded(lambda *a: advisor_view(ctx, *a)),
                          [club, fee, currency, wage, years, out_player, out_wage, out_amort],
                          advice_out)
 
         with gr.Tab("Negotiation"):
-            gr.Markdown(SELLER_NOTE)
+            gr.Markdown(SELLER_NOTE, elem_classes=["twai-note"])
             seller = gr.Dropdown(neg["seller_choices"], value=neg["seller_id"],
                                  label="Seller club")
             player = gr.Dropdown(neg["player_choices"], value=neg["player_id"],
                                  label="Player (current squad)")
             rule = gr.Radio([("green", "green"), ("not red", "not_red")], value="green",
                             label="Acceptance rule for buyers")
-            run = gr.Button("Run one round of sealed bids (baseline policy)")
-            header = gr.Markdown(f"> **{BANNER}**")
-            with gr.Row():
-                columns = [gr.Markdown() for _ in range(SCENARIO_COUNT)]
+            run = gr.Button("Run one round of sealed bids (baseline policy)", variant="primary")
+            header = gr.Markdown(f"> **{BANNER}**", elem_classes=["twai-result"])
+            with gr.Row(elem_classes=["twai-scenarios"]):
+                columns = [gr.Markdown(elem_classes=["twai-result", "twai-scenario"])
+                           for _ in range(SCENARIO_COUNT)]
             seller.change(guarded(lambda s: gr.Dropdown(choices=squad_choices(ctx, s), value=None)),
                           seller, player)
             run.click(guarded(lambda s, p, r: (lambda h, cols: (h, *cols))(
@@ -332,7 +525,7 @@ def main():
     except DemoInputError as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1
-    build_ui(ctx).launch(server_name="127.0.0.1", share=False)
+    build_ui(ctx).launch(server_name="127.0.0.1", share=False, **launch_kwargs())
     return 0
 
 

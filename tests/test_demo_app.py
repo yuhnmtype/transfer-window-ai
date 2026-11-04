@@ -355,3 +355,180 @@ def test_importing_the_app_with_gradio_loads_no_llm_modules():
             "bad = [m for m in sys.modules if m.startswith(('google.adk', 'google.genai'))"
             " or m == 'llm_agents']\nprint(bad)")
     assert _modules_after(code) == "[]"
+
+
+# ---------- Look and feel ----------
+# Only the source is checked here. Rendering, colour contrast and the toggle's real behaviour
+# (reload with ?__theme, aria-pressed) need a browser.
+
+TOKENS = ["page", "card", "border", "input-border", "text", "muted", "accent", "on-accent",
+          "callout", "button", "button-hover", "button-active", "on-button"]
+DARK_SELECTOR = ":root.dark, .dark, :root:has(body.dark)"
+
+
+def _block(css, selector):
+    return re.search(r"^" + re.escape(selector) + r" \{(.*?)^\}", css, re.S | re.M).group(1)
+
+
+@pytest.mark.parametrize("selector", [":root", DARK_SELECTOR])
+def test_css_defines_every_token_in_both_modes(selector):
+    block = _block(demo.CSS, selector)
+    for token in TOKENS:
+        assert re.search(rf"--twai-{token}: #[0-9A-F]{{6}};", block), token
+
+
+def test_css_has_the_interaction_and_number_rules():
+    for needed in (":focus-visible", "prefers-reduced-motion", "tabular-nums", "color-scheme",
+                   "touch-action: manipulation", "text-wrap: balance"):
+        assert needed in demo.CSS, needed
+
+
+@pytest.mark.parametrize("text", [demo.CSS, demo.TOGGLE_JS, demo.PAGE_JS])
+def test_css_and_js_have_nothing_external_or_unsafe(text):
+    for banned in ("transition: all", "outline: none", "url(", "@import", "http"):
+        assert banned not in text, banned
+
+
+def test_toggle_js_flips_the_theme_url_parameter():
+    assert 'searchParams.set("__theme"' in demo.TOGGLE_JS
+    assert 'classList.contains("dark")' in demo.TOGGLE_JS
+    assert "localStorage" not in demo.TOGGLE_JS + demo.PAGE_JS
+
+
+def test_launch_kwargs_hold_theme_css_and_js(monkeypatch):
+    monkeypatch.setattr(demo, "make_theme", lambda: "THEME")
+    assert demo.launch_kwargs() == {"theme": "THEME", "css": demo.CSS, "js": demo.PAGE_JS}
+
+
+def test_main_passes_the_look_and_feel_to_launch(monkeypatch):
+    calls = []
+
+    class FakeApp:
+        def launch(self, **kwargs):
+            calls.append(kwargs)
+
+    monkeypatch.setattr(demo, "load_context", lambda: "CTX")
+    monkeypatch.setattr(demo, "build_ui", lambda ctx: FakeApp())
+    monkeypatch.setattr(demo, "make_theme", lambda: "THEME")
+    assert demo.main() == 0
+    assert calls == [{"server_name": "127.0.0.1", "share": False, "theme": "THEME",
+                      "css": demo.CSS, "js": demo.PAGE_JS}]
+
+
+def test_theme_uses_system_fonts_only():
+    pytest.importorskip("gradio")
+    css = demo.make_theme()._get_theme_css()
+    assert "@font-face" not in css and "googleapis" not in css
+    assert "var(--twai-page)" in css
+
+
+def test_build_ui_has_the_theme_toggle(ctx):
+    pytest.importorskip("gradio")
+    app = demo.build_ui(ctx)
+    toggle = next(c for c in app.blocks.values()
+                  if getattr(c, "elem_id", None) == "twai-theme-toggle")
+    assert toggle.value == "Switch light / dark theme"
+    handler = next(f for f in app.fns.values() if toggle._id in [t[0] for t in f.targets])
+    assert handler.fn is None and handler.js == demo.TOGGLE_JS
+
+
+def test_build_ui_result_components_carry_the_style_classes(ctx):
+    pytest.importorskip("gradio")
+    app = demo.build_ui(ctx)
+    by_value = {}
+    classes = []
+    for c in app.blocks.values():
+        if type(c).__name__ == "Markdown":
+            by_value.setdefault(c.value, []).append(c.elem_classes or [])
+            classes.append(c.elem_classes or [])
+    assert by_value[demo.PAGE_HEADER] == [["twai-header"]]
+    assert by_value[demo.BUYER_NOTE] == [["twai-note"]]
+    assert by_value[demo.SELLER_NOTE] == [["twai-note"]]
+    assert sorted(by_value[f"> **{demo.BANNER}**"]) == [["twai-result"],
+                                                        ["twai-result", "twai-report"]]
+    assert classes.count(["twai-result", "twai-scenario"]) == demo.SCENARIO_COUNT
+
+
+def test_theme_vars_give_inputs_a_visible_box():
+    dark = {f"{name}_dark": value for name, value in demo.THEME_VARS.items()}
+    assert demo.THEME_VARS["input_border_width"] == dark["input_border_width_dark"] == "1px"
+    assert demo.THEME_VARS["input_background_fill"] == "var(--twai-page)"
+    assert demo.THEME_VARS["input_border_color"] == "var(--twai-input-border)"
+    assert demo.THEME_VARS["input_border_color_focus"] == "var(--twai-accent)"
+
+
+def test_theme_css_has_the_input_border_width_in_both_modes():
+    pytest.importorskip("gradio")
+    theme = demo.make_theme()
+    assert theme.input_border_width == theme.input_border_width_dark == "1px"
+    light, dark = theme._get_theme_css().split(".dark", 1)
+    assert "--input-border-width: 1px;" in light and "--input-border-width: 1px;" in dark
+
+
+def test_action_buttons_are_primary_and_the_toggle_is_secondary(ctx):
+    pytest.importorskip("gradio")
+    app = demo.build_ui(ctx)
+    buttons = {c.value: c.variant for c in app.blocks.values() if type(c).__name__ == "Button"}
+    assert buttons["Advise"] == "primary"
+    assert buttons["Run one round of sealed bids (baseline policy)"] == "primary"
+    assert buttons["Switch light / dark theme"] == "secondary"
+
+
+def _token(selector, name):
+    return re.search(rf"--twai-{name}: (#[0-9A-F]{{6}});", _block(demo.CSS, selector)).group(1)
+
+
+def test_button_tokens_are_separate_from_the_accent():
+    assert [_token(DARK_SELECTOR, t) for t in ("button", "button-hover", "button-active",
+                                               "on-button")] == ["#3566C9", "#3B6FD4", "#2F5DB8",
+                                                                 "#FFFFFF"]
+    assert _token(DARK_SELECTOR, "accent") == "#78AEF5"
+    assert _token(":root", "button") == _token(":root", "accent") == "#2457C5"
+    assert _token(":root", "on-button") == "#FFFFFF"
+    assert demo.THEME_VARS["button_primary_background_fill"] == "var(--twai-button)"
+    assert demo.THEME_VARS["button_primary_background_fill_hover"] == "var(--twai-button-hover)"
+    assert demo.THEME_VARS["button_primary_text_color"] == "var(--twai-on-button)"
+    assert demo.THEME_VARS["link_text_color"] == "var(--twai-accent)"
+    assert (".gradio-container button.primary:active:not(:disabled) "
+            "{ background: var(--twai-button-active); }") in demo.CSS
+    assert ":focus-visible { outline: 2px solid var(--twai-accent);" in demo.CSS
+
+
+def test_body_and_container_colours_come_from_the_tokens():
+    assert ("html body, .gradio-container { background: var(--twai-page); "
+            "color: var(--twai-text); }") in demo.CSS
+
+
+def test_scenarios_use_an_auto_fit_grid():
+    assert "grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));" in demo.CSS
+    assert ".gradio-container .row.twai-scenarios > * { min-width: 0; }" in demo.CSS
+    assert "!important" not in demo.CSS.split("prefers-reduced-motion")[0]
+
+
+def test_scenario_tables_break_only_at_spaces():
+    assert "word-break: normal;" in demo.CSS and "overflow-wrap: normal;" in demo.CSS
+    assert "white-space: nowrap;" in demo.CSS and "overflow-x: auto;" in demo.CSS
+    for banned in ("break-all", "break-word", "overflow-wrap: anywhere"):
+        assert banned not in demo.CSS, banned
+
+
+def test_build_ui_scenario_row_carries_the_grid_class(ctx):
+    pytest.importorskip("gradio")
+    app = demo.build_ui(ctx)
+    rows = [c for c in app.blocks.values() if type(c).__name__ == "Row"
+            and "twai-scenarios" in (c.elem_classes or [])]
+    assert len(rows) == 1
+
+
+def test_primary_hover_comes_only_from_the_theme():
+    assert ("button:hover:not(:disabled):not(.primary) { border-color: var(--twai-accent); }"
+            in demo.CSS)
+    assert "button:hover:not(:disabled) {" not in demo.CSS
+
+
+def test_dropdown_box_uses_the_input_border_and_keeps_the_focus_colour():
+    box = ".gradio-container .container .wrap:has(> .wrap-inner)"
+    assert f"{box} {{ border-color: var(--twai-input-border); }}" in demo.CSS
+    assert re.search(re.escape(box) + r":focus-within \{\s*border-color: "
+                     r"var\(--input-border-color-focus\);", demo.CSS)
+    assert demo.THEME_VARS["input_border_color_focus"] == "var(--twai-accent)"
