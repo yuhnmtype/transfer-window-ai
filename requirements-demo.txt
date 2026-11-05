@@ -2,3 +2,4 @@
 # The core (requirements.txt) and the google-adk venv do not need these.
 -r requirements.txt
 gradio==6.30.0
+pandas==3.0.6  # Same version as the google-adk venv. requirements.txt only sets a floor (>=2.2). A pandas 3.1.0 .pyd was blocked by Windows Smart App Control (event 3077) on the author's machine.
