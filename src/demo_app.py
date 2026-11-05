@@ -9,6 +9,8 @@ built locally first (python src/phase1_build_db.py, then src/phase2_load_seed.py
 
 Launch: .venv-demo\\Scripts\\python.exe src\\demo_app.py   (local only, http://127.0.0.1:7860)
 """
+import math
+import re
 import sys
 from dataclasses import asdict
 from pathlib import Path
@@ -132,7 +134,8 @@ def default_form_values(ctx):
     players = squad_choices(ctx, seller_id)
     player_id = (EXAMPLE_PLAYER_ID if seller_id == EXAMPLE_SELLER_ID
                  and EXAMPLE_PLAYER_ID in {v for _, v in players} else None)
-    return {"advisor": {**advisor, "club_choices": buyers},
+    return {"advisor": {**advisor, "out_player_id": "", "out_wage_gbp_m": "",
+                        "out_amortisation_gbp_m": "", "club_choices": buyers},
             "negotiation": {"seller_id": seller_id, "seller_choices": sellers,
                             "player_id": player_id, "player_choices": players}}
 
@@ -160,8 +163,38 @@ def _with_banner(body, club_ids=()):
 
 
 def _blank(value):
-    """An optional outgoing field the user left empty (the UI may send None or 0)."""
-    return value in (None, "", 0)
+    """An optional outgoing field after parsing: empty, or a 0 that the handler treats as empty."""
+    return value in (None, 0)
+
+
+def parse_optional_number(value, label, integer=False):
+    """Blank (None, empty or spaces) is None, never 0; "0" is a real 0. Plain non-negative
+    decimals only: no thousands separators, exponents or currency symbols."""
+    expected = ("a whole number such as 12345" if integer else
+                "0 or more, such as 5 or 5.25, with no thousands separators, exponents or "
+                "currency symbols")
+    error = DemoInputError(f"{label}: enter {expected}, or leave it blank.")
+    if value is None:
+        return None
+    if isinstance(value, str):
+        text = value.strip()
+        if not text:
+            return None
+        # At most 18 digits, so a player_id always fits an SQLite integer.
+        if not re.fullmatch(r"[0-9]{1,18}" if integer else r"[0-9]*\.?[0-9]+", text):
+            raise error
+        number = int(text) if integer else float(text)
+    elif isinstance(value, (int, float)) and not isinstance(value, bool):
+        number = value
+    else:
+        raise error
+    if not 0 <= number < math.inf:   # also rejects NaN
+        raise error
+    if integer:
+        if number != int(number):
+            raise error
+        return int(number)
+    return number
 
 
 def validate_deal_inputs(club_id, fee, wage_gbp_m, contract_years):
@@ -182,7 +215,12 @@ def validate_deal_inputs(club_id, fee, wage_gbp_m, contract_years):
 def advisor_view(ctx, club_id, fee, currency, wage_gbp_m, contract_years, out_player_id=None,
                  out_wage_gbp_m=None, out_amortisation_gbp_m=None):
     """Markdown report for one deal. Raises DemoInputError for anything the user must fix."""
+    out_player_id = parse_optional_number(out_player_id, "Outgoing player_id", integer=True)
+    out_wage_gbp_m = parse_optional_number(out_wage_gbp_m, "Outgoing annual wage")
+    out_amortisation_gbp_m = parse_optional_number(out_amortisation_gbp_m,
+                                                   "Outgoing annual amortisation")
     validate_deal_inputs(club_id, fee, wage_gbp_m, contract_years)
+    # All-zero rule: no player with wage 0 and amortisation 0 removes nothing, so it is no player.
     if all(_blank(v) for v in (out_player_id, out_wage_gbp_m, out_amortisation_gbp_m)):
         out_player_id = out_wage_gbp_m = out_amortisation_gbp_m = None   # no outgoing player
     elif _blank(out_player_id):
@@ -192,11 +230,12 @@ def advisor_view(ctx, club_id, fee, currency, wage_gbp_m, contract_years, out_pl
         if out_player_id is not None:
             if out_wage_gbp_m is None:
                 raise DemoInputError("The outgoing wage is a user input: enter it.")
+            # Also the squad check, so it runs even when the amortisation is typed.
+            estimate = lookup_outgoing_amortisation(conn, ctx["rules"], int(out_player_id),
+                                                    int(club_id))
             if out_amortisation_gbp_m is not None:
                 outgoing = OutgoingPlayer(out_wage_gbp_m, out_amortisation_gbp_m)
             else:
-                estimate = lookup_outgoing_amortisation(conn, ctx["rules"], int(out_player_id),
-                                                        int(club_id))
                 if estimate.status == "unknown":
                     raise DemoInputError(
                         f"The amortisation of player {int(out_player_id)} is unknown "
@@ -488,11 +527,16 @@ def build_ui(ctx):
                                  minimum=0)
                 years = gr.Number(label="Contract years", value=adv["contract_years"], minimum=1)
             with gr.Accordion("Optional outgoing player", open=False):
-                out_player = gr.Number(label="Outgoing player_id (estimate amortisation)",
-                                       precision=0)
-                out_wage = gr.Number(label="Outgoing annual wage (GBP m)")
-                out_amort = gr.Number(label="Outgoing annual amortisation (GBP m, overrides "
-                                            "the estimate)")
+                # Textbox, not Number: Gradio's Number turns an empty value into 0 once mounted.
+                out_player = gr.Textbox(label="Outgoing player_id (estimate amortisation; "
+                                              "leave blank to skip)",
+                                        value=adv["out_player_id"], placeholder="optional")
+                out_wage = gr.Textbox(label="Outgoing annual wage (GBP m)",
+                                      value=adv["out_wage_gbp_m"], placeholder="optional")
+                out_amort = gr.Textbox(label="Outgoing annual amortisation (GBP m, overrides the "
+                                             "estimate; leave blank to use the estimate)",
+                                       value=adv["out_amortisation_gbp_m"],
+                                       placeholder="optional")
             advise = gr.Button("Advise", variant="primary")
             advice_out = gr.Markdown(f"> **{BANNER}**", elem_classes=["twai-result", "twai-report"])
             advise.click(guarded(lambda *a: advisor_view(ctx, *a)),

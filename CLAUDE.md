@@ -216,8 +216,8 @@ Never present these as official figures.
   leakage not excluded. As registered: the baseline policy (factor 1) stays the default; the
   LLM policy is experimental and used only for the ablation; any new prompt experiment needs
   llm-criteria-v2.
-- Public documentation: README rewritten; full numbers in `docs/results.md`. 447 tests
-  collected on 2026-11-04 (same in .venv-adk and .venv-demo; 67 in tests/test_demo_app.py).
+- Public documentation: README rewritten; full numbers in `docs/results.md`. 513 tests
+  collected on 2026-11-05 (same in .venv-adk and .venv-demo; 133 in tests/test_demo_app.py).
 - Local demo done: `src/demo_app.py` (Gradio, local only, baseline policy, no LLM, no API key),
   `tests/test_demo_app.py`, `requirements-demo.txt` (venv `.venv-demo`, Python 3.13).
 - Step (e) done: limited descriptive window-level backtest of the fee fallback. Criteria

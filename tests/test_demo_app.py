@@ -107,7 +107,7 @@ def test_zero_fee_is_a_valid_free_transfer(ctx):
 
 # ---------- Empty outgoing player = no outgoing player ----------
 
-@pytest.mark.parametrize("empty", [None, 0])
+@pytest.mark.parametrize("empty", [None, 0, "", "  "])
 def test_empty_outgoing_section_matches_advise_deal_without_outgoing(ctx, empty):
     out = advise(ctx, fee=20.0, wage_gbp_m=3.0, contract_years=4, out_player_id=empty,
                  out_wage_gbp_m=empty, out_amortisation_gbp_m=empty)
@@ -117,6 +117,141 @@ def test_empty_outgoing_section_matches_advise_deal_without_outgoing(ctx, empty)
                                   advisor_config=ctx["advisor"])
     assert out == demo._with_banner(f"```text\n{demo.advice_text(direct)}\n```")
     assert "Outgoing annual cost removed" not in out
+
+
+# ---------- Outgoing player: blank is unknown, "0" is a real 0 ----------
+
+@pytest.mark.parametrize("value, expected", [
+    (None, None), ("", None), ("  ", None), ("0", 0), ("5", 5), (" 5.25 ", 5.25), (".5", 0.5),
+    (3, 3), (3.5, 3.5), (0, 0),
+])
+def test_parse_optional_number_accepts(value, expected):
+    assert demo.parse_optional_number(value, "Field") == expected
+
+
+def test_parse_optional_number_keeps_blank_and_zero_apart():
+    assert demo.parse_optional_number("", "Field") is None
+    assert demo.parse_optional_number("0", "Field") is not None
+
+
+@pytest.mark.parametrize("value", [
+    "abc", "-1", "1,5", "1,000", "1e3", "nan", "inf", "\u00a35", "5.", "\u0663", True, False,
+    -1, -0.5, float("nan"), float("inf"), [1], "9" * 400,
+])
+def test_parse_optional_number_rejects_and_names_the_field(value):
+    with pytest.raises(demo.DemoInputError, match="Some field: enter 0 or more"):
+        demo.parse_optional_number(value, "Some field")
+
+
+@pytest.mark.parametrize("value, expected", [("3", 3), (" 3 ", 3), ("0", 0), (3, 3), (3.0, 3),
+                                             ("", None), (None, None)])
+def test_parse_optional_integer_accepts(value, expected):
+    result = demo.parse_optional_number(value, "Field", integer=True)
+    assert result == expected and (result is None or isinstance(result, int))
+
+
+@pytest.mark.parametrize("value", ["3.5", "3.0", 3.5, "-3", True, "1" * 19])
+def test_parse_optional_integer_rejects(value):
+    with pytest.raises(demo.DemoInputError, match="Some id: enter a whole number"):
+        demo.parse_optional_number(value, "Some id", integer=True)
+
+
+@pytest.fixture
+def squad_ctx(tmp_path):
+    """Club 10; player 1 is in its squad with a transfer history, so an estimate exists."""
+    path = tmp_path / "out.sqlite"
+    out_fixture.make_db(path).close()
+    return demo.load_context(path)
+
+
+def outgoing_line(ctx, **kw):
+    out = demo.advisor_view(ctx, 10, 60.0, "GBP", 10.0, 5, out_player_id="1",
+                            out_wage_gbp_m="4", **kw)
+    return next(l for l in out.splitlines() if l.startswith("Outgoing annual cost removed"))
+
+
+@pytest.mark.parametrize("blank", ["", "  ", None])
+def test_blank_amortisation_uses_the_estimate(squad_ctx, blank):
+    with demo._conn(squad_ctx) as conn:
+        estimate = demo.lookup_outgoing_amortisation(conn, squad_ctx["rules"], 1, 10)
+    assert estimate.annual_gbp_m > 0
+    line = outgoing_line(squad_ctx, out_amortisation_gbp_m=blank)
+    assert (f"amortisation {estimate.annual_gbp_m:.2f} GBP m "
+            "(amortisation estimated from transfer history)") in line
+
+
+@pytest.mark.parametrize("typed, shown", [("0", "0.00"), ("3.0", "3.00")])
+def test_typed_amortisation_is_user_supplied(squad_ctx, typed, shown):
+    line = outgoing_line(squad_ctx, out_amortisation_gbp_m=typed)
+    assert f"amortisation {shown} GBP m (amortisation user-supplied)" in line
+
+
+@pytest.mark.parametrize("blank", ["", "   ", None])
+def test_player_with_blank_wage_is_an_error(squad_ctx, blank):
+    with pytest.raises(demo.DemoInputError, match="outgoing wage is a user input"):
+        demo.advisor_view(squad_ctx, 10, 60.0, "GBP", 10.0, 5, out_player_id="1",
+                          out_wage_gbp_m=blank, out_amortisation_gbp_m="")
+
+
+def test_manual_route_needs_both_fields(ctx):
+    with pytest.raises(demo.DemoInputError, match="enter both the wage and the annual"):
+        advise(ctx, out_player_id="", out_wage_gbp_m="5", out_amortisation_gbp_m="")
+    with pytest.raises(demo.DemoInputError, match="enter both the wage and the annual"):
+        advise(ctx, out_player_id="", out_wage_gbp_m="", out_amortisation_gbp_m="3")
+
+
+@pytest.mark.parametrize("typed", ["", "0", "3.0"])
+def test_player_outside_the_buyers_squad_is_always_an_error(squad_ctx, typed):
+    # Fixture: player 3 plays for club 20, not for buyer 10
+    with pytest.raises(ValueError, match="player_id 3 is not in the current squad of club_id 10"):
+        demo.advisor_view(squad_ctx, 10, 60.0, "GBP", 10.0, 5, out_player_id="3",
+                          out_wage_gbp_m="5", out_amortisation_gbp_m=typed)
+
+
+def test_unknown_player_id_is_an_error_even_with_a_typed_amortisation(squad_ctx):
+    with pytest.raises(LookupError, match="No player with player_id=999999"):
+        demo.advisor_view(squad_ctx, 10, 60.0, "GBP", 10.0, 5, out_player_id="999999",
+                          out_wage_gbp_m="5", out_amortisation_gbp_m="0")
+
+
+def test_typed_amortisation_still_works_when_the_estimate_is_unknown(squad_ctx):
+    # Player 2 is in the squad but has no transfer, so only a typed amortisation can be used
+    out = demo.advisor_view(squad_ctx, 10, 60.0, "GBP", 10.0, 5, out_player_id="2",
+                            out_wage_gbp_m="4", out_amortisation_gbp_m="1.5")
+    assert "amortisation 1.50 GBP m (amortisation user-supplied)" in out
+
+
+def test_all_zero_outgoing_section_is_no_outgoing_player(ctx):
+    def squad_cost(report):
+        return next(l for l in report.splitlines() if l.startswith("Squad cost"))
+    zero = advise(ctx, out_player_id="", out_wage_gbp_m="0", out_amortisation_gbp_m="0")
+    none = advise(ctx)
+    assert "Outgoing annual cost removed" not in zero
+    assert squad_cost(zero) == squad_cost(none)
+
+
+def test_manual_route_accepts_a_deliberate_zero(ctx):
+    out = advise(ctx, out_player_id="", out_wage_gbp_m="5", out_amortisation_gbp_m="0")
+    assert "wage 5.00 + amortisation 0.00 GBP m (amortisation user-supplied)" in out
+
+
+@pytest.mark.parametrize("kw, field", [
+    (dict(out_player_id="abc"), "Outgoing player_id"),
+    (dict(out_wage_gbp_m="1,5"), "Outgoing annual wage"),
+    (dict(out_amortisation_gbp_m="-1"), "Outgoing annual amortisation"),
+])
+def test_advisor_view_names_the_bad_outgoing_field(ctx, kw, field):
+    with pytest.raises(demo.DemoInputError, match=f"{field}: enter"):
+        advise(ctx, **kw)
+
+
+def test_defaults_leave_the_outgoing_fields_blank(ctx, monkeypatch):
+    for use_examples in (False, True):
+        if use_examples:
+            use_fixture_examples(monkeypatch)
+        adv = demo.default_form_values(ctx)["advisor"]
+        assert (adv["out_player_id"], adv["out_wage_gbp_m"],
+                adv["out_amortisation_gbp_m"]) == ("", "", "")
 
 
 def test_default_fee_currency_is_gbp():
@@ -315,6 +450,27 @@ def test_build_ui_without_launching(ctx):
 
 def _component(app, label):
     return next(c for c in app.blocks.values() if getattr(c, "label", None) == label)
+
+
+def test_build_ui_outgoing_fields_are_blank_textboxes(ctx):
+    gr = pytest.importorskip("gradio")
+    app = demo.build_ui(ctx)
+    for label in ("Outgoing player_id (estimate amortisation; leave blank to skip)",
+                  "Outgoing annual wage (GBP m)",
+                  "Outgoing annual amortisation (GBP m, overrides the estimate; leave blank to "
+                  "use the estimate)"):
+        box = _component(app, label)
+        assert isinstance(box, gr.Textbox)
+        assert box.value == "" and box.placeholder == "optional"
+
+
+def test_build_ui_other_advisor_inputs_are_unchanged(ctx):
+    gr = pytest.importorskip("gradio")
+    app = demo.build_ui(ctx)
+    assert isinstance(_component(app, "Buyer club"), gr.Dropdown)
+    assert isinstance(_component(app, "Fee currency"), gr.Radio)
+    for label in ("Fee (millions)", "Incoming annual wage (GBP m)", "Contract years"):
+        assert isinstance(_component(app, label), gr.Number)
 
 
 def test_build_ui_player_list_is_filled_on_first_load(ctx, monkeypatch):
