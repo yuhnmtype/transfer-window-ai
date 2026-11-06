@@ -1,14 +1,21 @@
 # Transfer Window AI
 
-A rules engine, advisor and negotiation simulator for Premier League transfer deals under the
-2026/27 squad cost ratio (SCR) rules, built on a frozen Transfermarkt snapshot (2026-07-11).
-Code computes every fee and SCR figure; two language-model agents (Google ADK with Gemini) were
-added only to adjust a valuation within a fixed band, and their effect was tested in a
-pre-registered evaluation. The learned fee model and the LLM agents did not beat a simple
-market-value-ratio fallback on the registered test split, and the project reports this as its
-main empirical result. All figures are illustrative: this is not a real-world transfer
-predictor and not a production system. **Nothing here is a real-world conclusion about any
-club.**
+- Transfer Window AI checks hypothetical Premier League transfer deals against the 2026/27 squad
+  cost ratio (SCR) rules and simulates one round of sealed bids for a player.
+- It runs on a frozen Transfermarkt snapshot (2026-07-11), with club finances for FY 2024/25 and
+  SCR rules taken from secondary sources; only the Tottenham Hotspur finance row was checked
+  against filed accounts.
+- Code computes every fee and SCR figure: the ratio before and after a deal, headroom to the
+  green and red thresholds, the largest wage that keeps a club within each threshold, and each
+  buyer's maximum fee under three illustrative wage scenarios.
+- Two Gemini agents (Google ADK) can adjust a valuation within a fixed band; they never compute
+  a fee or an SCR figure. The default policy, and the only one the local demo uses, is rule-based
+  and needs no API key.
+- In a pre-registered evaluation, neither the learned fee model nor the LLM agents beat a simple
+  market-value-ratio fallback on the registered test split; the project reports this as its main
+  empirical result (see "Evaluation and negative results").
+- All figures are illustrative: this is not a real-world transfer predictor or a production
+  system, and **nothing here is a real-world conclusion about any club.**
 
 ## What it does
 
@@ -121,26 +128,50 @@ It runs on your machine only, never calls a language model, needs no API key, us
 rule-based baseline policy only, and always shows the three wage scenarios and the
 illustrative-only banner. Build the database first (`python src\phase1_build_db.py`, then
 `python src\phase2_load_seed.py`), then use a separate venv named `.venv-demo` with Python
-3.13. An equivalent setup (the same interpreter, 3.13.16, and gradio 6.30.0) was used to create
-`.venv-demo`; the exact commands shown here were not re-run for this README.
+3.13. `requirements-demo.txt` installs gradio 6.30.0 and pins pandas 3.0.6. An equivalent setup
+(the same interpreter, 3.13.16, and gradio 6.30.0) was used to create `.venv-demo`; the exact
+commands shown here were not re-run for this README.
 
 ```powershell
 py -3.13 -m venv .venv-demo
-.\.venv-demo\Scripts\python.exe -m pip install -r requirements-demo.txt   # includes gradio==6.30.0
+.\.venv-demo\Scripts\python.exe -m pip install -r requirements-demo.txt   # includes gradio==6.30.0 and pandas==3.0.6
 .\.venv-demo\Scripts\python.exe src\demo_app.py
 ```
 
-Then open http://127.0.0.1:7860.
+Then open http://127.0.0.1:7860. The demo has a light and a dark theme, with a toggle button on
+the right, above the tabs.
 
 <img src="docs/images/demo_advisor.png" width="800" alt="Advisor tab: SCR report for Brentford FC with a 20m GBP fee, 3m GBP annual wage over 4 years, showing before/after ratio, wage sensitivity and caveats">
 
+<img src="docs/images/demo_outgoing_fields.png" width="800" alt="Advisor tab with the optional outgoing player section open: the player_id, annual wage and annual amortisation fields are blank">
+
 <img src="docs/images/demo_negotiation.png" width="800" alt="Negotiation tab: one round of sealed bids for Sandro Tonali (Newcastle United) under three wage scenarios, rule green, baseline policy">
+
+<img src="docs/images/demo_negotiation_dark.png" width="800" alt="Negotiation tab in the dark theme: one round of sealed bids for Sandro Tonali (Newcastle United) under three wage scenarios, rule green, baseline policy">
 
 Screenshots of the local Gradio demo; the demo is not publicly hosted. Illustrative only, not a
 real-world conclusion about any club; wage scenarios are assumptions. In the negotiation
-screenshot, the large max fee for Tottenham Hotspur is an SCR headroom ceiling (headroom
-multiplied by the assumed contract length), not a prediction and not a cash check; its finance
-row was checked against the filed accounts (see Limitations).
+screenshots, the large max fee for Tottenham Hotspur is an SCR headroom ceiling (the headroom to
+the green threshold left after the assumed wage, multiplied by the assumed contract length of 5
+years), not a prediction and not a cash check; its finance row was checked against the filed
+accounts (see Limitations).
+
+### Known limitations of the local demo
+
+- Keyboard focus on some inputs is hard to see (observed in light mode): Gradio sets
+  `outline: none !important` on number and text inputs, so focus relies on a border colour
+  change.
+- Radio-button label borders are pale, because they use the same border colour as the cards.
+- Fields stretch with the window up to Gradio's 1920px limit; there is no narrower layout width.
+- Result areas have no `aria-live` announcement of their own.
+- Switching between light and dark reloads the page, so entered values and results are reset.
+- Input errors appear as a pop-up message, not next to the field.
+- An outgoing player is entered by `player_id` (no name search) and must be in the buyer's
+  current squad. Entering 0 in all three outgoing fields counts as no outgoing player.
+- The demo runs locally only (127.0.0.1), uses the baseline policy only, never calls a language
+  model and needs no API key.
+- `requirements-demo.txt` pins `pandas==3.0.6`, because a pandas 3.1.0 `.pyd` was blocked by
+  Windows Smart App Control on the author's machine.
 
 ## Reproducibility
 
