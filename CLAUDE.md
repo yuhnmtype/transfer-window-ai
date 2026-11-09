@@ -61,8 +61,12 @@ Portfolio project for an AI Engineering CV. Later stages use Google ADK + Gemini
 - Method: check at least two independent sources (Swiss Ramble, PSRwatch, club releases).
   Use the more precise figure when sources agree. Confidence is the weakest field in the row.
 - All figures come from secondary sources and were not checked against Companies House,
-  except the Tottenham Hotspur row, which was checked against its filed consolidated accounts
-  on 2026-10-27.
+  except five clubs. Tottenham Hotspur was checked against its filed consolidated accounts on
+  2026-10-27. On 2026-11-09, the Arsenal, West Ham and Newcastle seed rows were found to match
+  their filed consolidated accounts within rounding. The Brighton seed row mixes bases (revenue
+  matches the single-company turnover, wage and profit on sales match the group figures) and
+  was left unchanged (see `docs/finance_verification.md`). The other 15 clubs are still
+  unchecked.
 - Lessons: Man City wages are 408m. The 579m from The Esk was rejected. Brighton revenue is
   222m (242m wrongly included property income). Tottenham wages 256m are group staff costs
   (Tottenham Hotspur Limited, consolidated, incl. stadium and retail staff); 248.3m is
@@ -161,8 +165,10 @@ Never present these as official figures.
 
 ## Status
 - Phase 1 (data foundation): done and reproducible.
-- Phase 2 (finance seed): done for all 20 clubs, with a structured sources table (47 rows).
-  Both check scripts pass. Weakest rows: Fulham and West Ham (single source), Leeds, Sunderland
+- Phase 2 (finance seed): done for all 20 clubs, with a structured sources table (55 rows).
+  Both check scripts pass. Weakest rows: Fulham (single source), West Ham (confidence left at
+  low; the filed consolidated accounts are now a second, primary source, see
+  docs/finance_verification.md), Leeds, Sunderland
   and Burnley (Championship revenue), Crystal Palace (source disagreement). Tottenham was
   checked against its filed consolidated accounts on 2026-10-27 (confidence high).
 - Rules verification: done at secondary-source level (see Rules). Open items listed under
@@ -228,8 +234,9 @@ Never present these as official figures.
 - Next: UI polish and a few frontend plugins, then a final README pass; see Backlog for the
   rest.
 - Backlog (not scheduled): loan support in deal_delta; GBE module (points table
-  unverified); age multiplier for wages (only as an ablation); second sources for Fulham
-  and West Ham; Companies House spot-check (Man City, Brighton); second source
+  unverified); age multiplier for wages (only as an ablation); second source for Fulham;
+  review West Ham confidence now that its consolidated accounts were checked; Companies House
+  spot-check (Man City); second source
   for the 5-year amortisation cap; Handbook Section E verification; promoted clubs (v2);
   FY 2025/26 accounts when published; wage-criteria-v2 with new reference data; mark Leeds
   and Sunderland as "Championship revenue" in --list-clubs output; historical EUR/GBP

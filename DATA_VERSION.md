@@ -21,8 +21,8 @@ by more than 4 (Liverpool, West Ham, Newcastle, Everton, Crystal Palace, Wolves)
 
 ## Finance seed
 
-- Seed: `seed/club_finance_seed.csv` (20 clubs, FY 2024/25), MD5 `513a5d09e09a7911e697cea9071f8e87`
-- Sources: `seed/club_finance_sources.csv` (47 rows), MD5 `e6ae8d8a37687d6e6b3659da93610071`
+- Seed: `seed/club_finance_seed.csv` (20 clubs, FY 2024/25), MD5 `f36b9a72268ef1faf1c7567870ab19d4`
+- Sources: `seed/club_finance_sources.csv` (55 rows), MD5 `d8fe9b409f82d16b0cf19ec85679832d`
 - MD5 values are computed after normalising line endings to LF:
   `python -c "import hashlib; print(hashlib.md5(open('seed/club_finance_seed.csv','rb').read().replace(b'\r\n', b'\n')).hexdigest())"`
   (Git Bash alternative: `tr -d '\r' < seed/club_finance_seed.csv | md5sum`).
@@ -31,10 +31,14 @@ by more than 4 (Liverpool, West Ham, Newcastle, Everton, Crystal Palace, Wolves)
   year-ends, 31 May) only had third-party estimates for 2025/26 in Oct 2026, so later year-end clubs
   are assumed not to have published FY 2025/26 either (not checked club by club).
 - `published_date` in the sources table is the date of the article, not the filing date, except
-  for the Companies House row, where it is the filing date.
+  for the Companies House rows, where it is the filing date.
 - All figures come from secondary sources and were not checked against Companies House, except
-  the Tottenham Hotspur row, which was checked against its filed consolidated accounts on
-  2026-10-27.
+  five rows. Tottenham Hotspur was checked against its filed consolidated accounts on 2026-10-27.
+  On 2026-11-09, the Arsenal, West Ham United and Newcastle United rows were found to match their
+  filed consolidated accounts within rounding. The Brighton & Hove Albion row mixes bases
+  (revenue matches the single-company turnover, wage and profit on sales match the group
+  figures) and was left unchanged (see `docs/finance_verification.md`). The other 15 clubs are
+  not checked.
 
 ## Change log
 
@@ -48,3 +52,18 @@ by more than 4 (Liverpool, West Ham, Newcastle, Everton, Crystal Palace, Wolves)
   `results/fee_model_eval.json` refers to the database before this reload. The earlier seed
   (and the earlier sources table, MD5 `2dd224703670d2872f4aeedb3583fe32`) is recoverable from
   git history at the commit before this change.
+- 2026-11-09: verification record, no value change. Four seed rows (Arsenal FC, West Ham United,
+  Newcastle United, Brighton & Hove Albion) changed only in `notes`: text appended with the
+  values from the filed consolidated and single-company accounts. No other cell changed,
+  including `source_url` and `confidence`. Eight Companies House source rows were added, two per
+  club (consolidated and single-company) for Arsenal, West Ham, Newcastle and Brighton, so the
+  sources table has 55 rows. The Newcastle seed amortisation (99.9) matches the combined
+  amortisation and impairment in the consolidated accounts (99.868), not amortisation alone
+  (inferred from the numbers). The columns read by the frozen wage evaluation
+  (`revenue_gbp_m`, `wage_bill_gbp_m`, `revenue_basis`, `club_name`) were not changed in this
+  entry, for any of the 20 clubs. The seed MD5 recorded in the provenance of
+  `results/wage_model_eval.json` (`8a9f6ca4a4b7cf23134e0b9093dc2ac6`) still refers to the seed
+  of 2026-10-12, when that evaluation ran. The earlier seed (MD5
+  `513a5d09e09a7911e697cea9071f8e87`) and sources table (MD5 `e6ae8d8a37687d6e6b3659da93610071`)
+  are recoverable from git history at the commit before this change. Details:
+  `docs/finance_verification.md`.

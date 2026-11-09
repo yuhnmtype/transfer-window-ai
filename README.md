@@ -3,8 +3,9 @@
 - Transfer Window AI checks hypothetical Premier League transfer deals against the 2026/27 squad
   cost ratio (SCR) rules and simulates one round of sealed bids for a player.
 - It runs on a frozen Transfermarkt snapshot (2026-07-11), with club finances for FY 2024/25 and
-  SCR rules taken from secondary sources; only the Tottenham Hotspur finance row was checked
-  against filed accounts.
+  SCR rules taken from secondary sources; five clubs' finance rows were checked against filed
+  accounts (see [`docs/finance_verification.md`](docs/finance_verification.md)), and 15 clubs
+  are still unchecked.
 - Code computes every fee and SCR figure: the ratio before and after a deal, headroom to the
   green and red thresholds, the largest wage that keeps a club within each threshold, and each
   buyer's maximum fee under three illustrative wage scenarios.
@@ -193,9 +194,10 @@ accounts (see Limitations).
   scrape, CC0), frozen snapshot 2026-07-11. Checksums are in `DATA_VERSION.md`.
 - **Club finances (FY 2024/25):** `seed/club_finance_seed.csv`, built from secondary sources
   (Swiss Ramble, PSRwatch and others) and cross-checked against `seed/club_finance_sources.csv`
-  (47 source rows). Not checked against Companies House, except the Tottenham Hotspur row,
-  which was checked against its filed consolidated accounts on 2026-10-27. Every seed row has a
-  source URL and a confidence level.
+  (55 source rows). Five clubs were checked against filed accounts at Companies House:
+  Tottenham Hotspur (2026-10-27), and Arsenal, West Ham United, Newcastle United and Brighton &
+  Hove Albion (2026-11-09). The other 15 clubs are still unchecked.
+  Every seed row has a source URL and a confidence level.
 - **Rejected source:** the "Global Football Transfer Market 2010-2026" dataset (Nefedov) was
   rejected because it appears to be mostly synthetic.
 - The database contains the 20 clubs of the 2025/26 Premier League; the three newly promoted
@@ -219,6 +221,12 @@ accounts (see Limitations).
   consolidated accounts (Companies House 01706358; see `seed/SOURCES.md`). Its wage bill
   (256m) is group-wide staff costs, including stadium and retail staff, so it overstates squad
   cost; the demo shows a note whenever Tottenham is in a result.
+- The Arsenal, West Ham United and Newcastle United seed rows match their filed consolidated
+  accounts within rounding. The Brighton & Hove Albion seed row mixes bases: its revenue
+  matches the single-company turnover, while its wage and profit on sales match the group
+  figures; it was left unchanged. The filing values are recorded in
+  [`docs/finance_verification.md`](docs/finance_verification.md). The other 15 clubs are still
+  unchecked.
 - SCR rules come from secondary sources; the Premier League Handbook text was not checked.
 - The SCR engine has not been validated against real outcomes: the finance seed is FY 2024/25
   only and was published between December 2025 and May 2026, so it cannot be shown to be

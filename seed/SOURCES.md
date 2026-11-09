@@ -1,18 +1,20 @@
 # Finance seed sources (FY 2024/25)
 
 All figures are in GBP millions. Every figure comes from a **secondary source** that
-summarises audited accounts, except the Tottenham Hotspur Companies House row, which is a
-primary filing; the Tottenham Hotspur seed row was checked against it on 2026-10-27. No
-other row was checked against the primary filing (Companies House) or the club's own annual
-report PDF. Swiss Ramble articles are paywalled, so only the visible part was read. Sources
-were accessed between 2026-10-10 and 2026-10-11.
+summarises audited accounts, except the Companies House rows, which are primary filings. The
+Tottenham Hotspur seed row was checked against its consolidated accounts on 2026-10-27. On
+2026-11-09 the Arsenal, West Ham, Newcastle and Brighton seed rows were checked against their
+consolidated and single-company accounts (see `docs/finance_verification.md`). No other row was
+checked against the primary filing (Companies House) or the club's own annual report PDF.
+Swiss Ramble articles are paywalled, so only the visible part was read. Sources were accessed
+between 2026-10-10 and 2026-10-11.
 
 The machine-readable version of this table is `club_finance_sources.csv`, which is checked
 against the seed by `python src/phase2_check_sources.py`. Keep both in sync.
 
 Abbreviations: SR = Swiss Ramble, PSR = PSRwatch, GotP = Game of the People.
 "n/s" means the source did not state the figure. "Published" is the date of the article,
-not the filing date of the accounts, except for the Companies House row, where it is the
+not the filing date of the accounts, except for the Companies House rows, where it is the
 filing date; "-" means unknown.
 
 ## Per-club source comparison
@@ -29,9 +31,13 @@ filing date; "-" means unknown.
 | Brighton | [GotP](https://gameofthepeople.com/2026/01/16/brightons-halo-slips-just-a-little/) | 2026-01-16 | about 242 (derived, includes 20 property income, rejected) | 165 | 57 | n/s |
 | Brighton | [Inside World Football](https://www.insideworldfootball.com/2026/01/12/brighton-report-54m-loss-set-course-europe-first-major-trophy/) | 2026-01-12 | about 247 (not confirmed elsewhere, rejected) | n/s | n/s (player trading -25) | n/s |
 | Brighton | [Club release](https://www.brightonandhovealbion.com/media-article/club-news-annual-accounts-published-2024-25-season-january-2026) | 2026-01 | n/s | n/s | n/s | n/s (operating loss 54.4, amortisation up 39.8) |
+| Brighton | [Companies House, single-company accounts](https://find-and-update.company-information.service.gov.uk/company/00081077/filing-history) | 2026-03-17 (filing date) | 226.063 (turnover alone 221.063) | 158.679 | 56.911 (line "Player trading", note not checked) | 81.840 (impairment nil) |
+| Brighton | [Companies House, consolidated accounts](https://find-and-update.company-information.service.gov.uk/company/02849319/filing-history) | 2026-03-17 (filing date) | 247.732 (turnover alone 242.672) | 164.552 | 57.005 (line "Profit on player trading", note not checked) | 81.976 |
 | Fulham | [SR](https://swissramble.substack.com/p/fulham-finances-202425) | - | 194.8 | 166.5 | 41.0 | 61.5 |
 | Arsenal | [SR](https://swissramble.substack.com/p/arsenal-finances-202425) | - | 690 | 347 | 81 | 172 (excludes 15 impairment) |
 | Arsenal | [PSR](https://psrwatch.com/insights/arsenal-accounts-explained-2025) | - | 691 | 347 | 81.2 | 172 |
+| Arsenal | [Companies House, consolidated accounts](https://find-and-update.company-information.service.gov.uk/company/04250459/filing-history) | 2026-02-25 (filing date) | 690.998 | 346.804 | 81.237 | 171.627 (excludes 15.241 impairment) |
+| Arsenal | [Companies House, single-company accounts (secondary)](https://find-and-update.company-information.service.gov.uk/company/00109244/filing-history) | 2026-02-25 (filing date) | 643.289 | 331.227 | 81.137 | 170.786 (excludes 15.241 impairment) |
 | Liverpool | [SR](https://swissramble.substack.com/p/liverpool-finances-202425) | - | 703 | 428 | 53 | 117 |
 | Liverpool | [PSR](https://psrwatch.com/insights/liverpool-accounts-explained-2025) | - | 703 | 428 | 53.3 | 117 |
 | Brentford | [SR](https://swissramble.substack.com/p/brentford-finances-202425) | - | 173.1 | 130.8 | 27.2 | 47.8 |
@@ -46,6 +52,8 @@ filing date; "-" means unknown.
 | Tottenham | [Companies House, consolidated accounts](https://find-and-update.company-information.service.gov.uk/company/01706358/filing-history) | 2026-03-30 (filing date) | 565.266 | 255.811 | 52.565 | 141.851 |
 | Newcastle | [SR](https://swissramble.substack.com/p/newcastle-united-finances-202425) | - | 335 | 243 | 20 | 100 |
 | Newcastle | [PSR](https://psrwatch.com/insights/newcastle-accounts-explained-2025) | - | 335 | 243 | 19.9 | 99.9 |
+| Newcastle | [Companies House, single-company accounts](https://find-and-update.company-information.service.gov.uk/company/00031014/filing-history) | 2026-03-31 (filing date) | 323.124 | 241.344 | 19.870 | 99.377 (excludes 0.366 impairment) |
+| Newcastle | [Companies House, consolidated accounts](https://find-and-update.company-information.service.gov.uk/company/02529667/filing-history) | 2026-03-31 (filing date) | 335.322 | 243.477 | 19.875 | 99.502 (excludes 0.366 impairment; split from OCR) |
 | Aston Villa | [SR](https://swissramble.substack.com/p/aston-villa-finances-202425) | - | 378 | 273 | 52 | 100 (excludes 6.5 impairment) |
 | Aston Villa | [PSR](https://psrwatch.com/insights/aston-villa-accounts-explained-2025) | - | 378 | 273 | 52 | 106 (probably includes impairment) |
 | Everton | [SR](https://swissramble.substack.com/p/everton-finances-202425) | - | 196.7 | 152.1 | 31.3 | 50.9 |
@@ -64,6 +72,8 @@ filing date; "-" means unknown.
 | Burnley | [SR](https://swissramble.substack.com/p/burnley-finances-202425) | - | 71.7 | 82.3 | 59.0 | 36.7 |
 | Burnley | [The Esk](https://theesk.org/2026/05/07/the-analysis-series-burnley-fc-holdings-limited-annual-report-and-financial-statements-2024-25/) | 2026-05-07 | 71.7 | 82.3 | 59.0 | 36.7 |
 | West Ham | [The Esk](https://theesk.org/2026/04/22/the-analysis-series-analysis-of-wh-holding-limited-financial-distillation-ownership-transition-and-structural-viability-of-west-ham-united-fy-2024-2025/) | 2026-04-22 | 227.6 | 175.9 (scope unclear) | 20.0 | 99.4 |
+| West Ham | [Companies House, single-company accounts](https://find-and-update.company-information.service.gov.uk/company/00066516/filing-history) | 2026-02-26 (filing date) | 229.954 (turnover alone 226.058) | 173.335 | 19.954 | 99.408 |
+| West Ham | [Companies House, consolidated accounts](https://find-and-update.company-information.service.gov.uk/company/05993863/filing-history) | 2026-02-26 (filing date) | 231.448 (turnover alone 227.552) | 175.893 | 19.954 | 99.408 |
 | Wolves | [SR](https://swissramble.substack.com/p/wolverhampton-wanderers-finances-04e) | - | 172 | 163 | 117 | 75 |
 | Wolves | [The Esk](https://theesk.org/2026/05/08/the-analysis-series-wolverhampton-wanderers-annual-report-and-accounts-2024-25/) | 2026-05-08 | 172.0 | 162.1 | 117.0 | 75.4 |
 
@@ -90,6 +100,33 @@ filing date; "-" means unknown.
   line "amortisation, impairments and other net football trading" (146.627; group 146.720).
   The Esk's "about 402 group-level" wage figure is not supported by the filed consolidated
   accounts.
+- **Arsenal:** checked on 2026-11-09 against the filed FY 2024/25 consolidated accounts of
+  Arsenal Holdings Limited (Companies House 04250459, made up to 31 May 2025, filed
+  2026-02-25): group turnover 690.998 (excluding the share of joint venture turnover 1.028);
+  staff costs 346.804; profit on disposal of player registrations 81.237; amortisation of
+  player registrations 171.627 (excluding impairment 15.241). The seed row matches within
+  rounding and is unchanged. The single-company accounts of The Arsenal Football Club Limited
+  (00109244) show turnover 643.289 and staff costs 331.227; the gap is group scope, confirmed.
+- **West Ham and Newcastle:** checked on 2026-11-09 against the filed FY 2024/25 consolidated
+  accounts of WH Holding Limited (05993863) and Newcastle United Limited (02529667), and against
+  the single-company accounts of their football club companies (00066516, 00031014). Both seed
+  rows match the consolidated accounts within rounding and are unchanged. The West Ham revenue
+  227.6 matches group turnover 227.552 excluding other operating income 3.896; the Tottenham
+  revenue includes other income, so the seed treats other operating income inconsistently
+  across clubs (recorded only). The Newcastle consolidated amortisation and impairment split
+  (99.502 and 0.366, face total 99.868) is from OCR, and its single-company filing is internally
+  inconsistent by 0.090. The Newcastle seed amortisation 99.9 matches the combined
+  amortisation and impairment 99.868, not amortisation alone 99.502 (inferred from the
+  numbers).
+- **Brighton:** checked on 2026-11-09 against the filed FY 2024/25 consolidated accounts of
+  Brighton & Hove Albion Holdings Limited (02849319) and the single-company accounts of The
+  Brighton and Hove Albion Football Club Limited (00081077). The seed row mixes bases: revenue
+  222.0 matches the single-company turnover 221.063 (group 242.672, higher mainly in the Other
+  category, 40.930 against 20.477), while wage 165.0 and profit on sales 57.0 match the group
+  figures 164.552 and 57.005. Amortisation 81.8 lies between 81.840 (single company) and 81.976
+  (group). The 242 revenue rejected above includes about 20 of property income, so excluding it
+  looks deliberate. The row is unchanged. The explanatory notes of the player trading lines are
+  not yet checked. Details: `docs/finance_verification.md`.
 - **Crystal Palace revenue and wages:** SR and PSR differ by more than rounding. SR is used
   because it gives one decimal. Definitions may differ.
 - **Aston Villa amortisation:** 100 (SR, excludes a 6.5 impairment) is used. PSR gives 106,
@@ -106,8 +143,8 @@ filing date; "-" means unknown.
 - **Leeds wages:** 103 (PSR) is used. The Yorkshire Evening Post reports 107.7. Unresolved.
 - **Sunderland:** Swiss Ramble and PSR differ by about 0.9 on revenue and wages. Swiss Ramble
   is used. Financial year ends 31 July 2025.
-- **West Ham:** single source (The Esk, group accounts to 31 May 2025). It is unclear whether
-  staff costs include non-football staff. Needs a second source.
+- **West Ham:** a second, primary source now exists: the filed consolidated accounts of WH
+  Holding Limited, checked on 2026-11-09 (see above). The confidence value was left unchanged.
 - **Wolves:** the accounts cover 13 months to 30 June 2025 because the year-end moved from
   May to June, so figures are slightly inflated against a 12-month year. Flagged in the seed
   as `period_months = 13`.
