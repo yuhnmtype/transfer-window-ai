@@ -1,0 +1,335 @@
+# Question set for the advisor tool agent (docs/agent_criteria.md, DRAFT).
+# Generated from the tables in docs/agent_criteria.md; read by src/advisor_agent.py.
+# [[question]] is the registered set (22 in scope, 8 out of scope). [[pilot]] holds the
+# pilot questions, which are never scored. Its SHA-256 is recorded in the pilot record at
+# freeze time; any edit after the tag `agent-criteria-v1` needs a new criteria tag.
+# expected: the tool arguments that follow from the wording; agent_fee_gbp_m is absent when
+# the question states no agent fee (expected null).
+
+[[question]]
+id = "Q01"
+kind = "in_scope"
+text = "Brentford want to sign a player for £20m on a four-year contract with wages of £3m a year. What does that do to their squad cost ratio?"
+[question.expected]
+club_id = 1148
+fee = 20.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 3.0
+contract_years = 4.0
+
+[[question]]
+id = "Q02"
+kind = "in_scope"
+text = "What happens to Arsenal's SCR if they pay €80m for a midfielder on a five-year deal at £10m per year?"
+[question.expected]
+club_id = 11
+fee = 80.0
+fee_currency = "EUR"
+annual_wage_gbp_m = 10.0
+contract_years = 5.0
+
+[[question]]
+id = "Q03"
+kind = "in_scope"
+text = "Spurs are looking at a £45m signing, £6m annual wages, five years. Can they afford it under the squad cost rules?"
+[question.expected]
+club_id = 148
+fee = 45.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 6.0
+contract_years = 5.0
+
+[[question]]
+id = "Q04"
+kind = "in_scope"
+text = "Man Utd: £35m fee, 4 years, £5.5m a year in wages, plus a £3m agent fee."
+[question.expected]
+club_id = 985
+fee = 35.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 5.5
+contract_years = 4.0
+agent_fee_gbp_m = 3.0
+
+[[question]]
+id = "Q05"
+kind = "in_scope"
+text = "Check a deal for Villa: €30m transfer, £4m yearly wage, contract of 3 years."
+[question.expected]
+club_id = 405
+fee = 30.0
+fee_currency = "EUR"
+annual_wage_gbp_m = 4.0
+contract_years = 3.0
+
+[[question]]
+id = "Q06"
+kind = "in_scope"
+text = "Newcastle United would pay £50m for a striker with £7m a year over 5 years. Impact on headroom?"
+[question.expected]
+club_id = 762
+fee = 50.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 7.0
+contract_years = 5.0
+
+[[question]]
+id = "Q07"
+kind = "in_scope"
+text = "Brighton & Hove Albion buying a defender for £90m, £16m a year, 5-year contract."
+[question.expected]
+club_id = 1237
+fee = 90.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 16.0
+contract_years = 5.0
+
+[[question]]
+id = "Q08"
+kind = "in_scope"
+text = "Forest are considering €90m for a winger on £14m per year for 5 years."
+[question.expected]
+club_id = 703
+fee = 90.0
+fee_currency = "EUR"
+annual_wage_gbp_m = 14.0
+contract_years = 5.0
+
+[[question]]
+id = "Q09"
+kind = "in_scope"
+text = "Chelsea: £70m fee, wages of £9m a year, six-year contract."
+[question.expected]
+club_id = 631
+fee = 70.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 9.0
+contract_years = 6.0
+
+[[question]]
+id = "Q10"
+kind = "in_scope"
+text = "Liverpool want a £55m player, £7.5m per year, 5 years, agent fee £4m."
+[question.expected]
+club_id = 31
+fee = 55.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 7.5
+contract_years = 5.0
+agent_fee_gbp_m = 4.0
+
+[[question]]
+id = "Q11"
+kind = "in_scope"
+text = "Manchester City: €80m for a midfielder, £10m a year, 5 years."
+[question.expected]
+club_id = 281
+fee = 80.0
+fee_currency = "EUR"
+annual_wage_gbp_m = 10.0
+contract_years = 5.0
+
+[[question]]
+id = "Q12"
+kind = "in_scope"
+text = "Everton are thinking about a £12m signing on £2m a year for three years."
+[question.expected]
+club_id = 29
+fee = 12.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 2.0
+contract_years = 3.0
+
+[[question]]
+id = "Q13"
+kind = "in_scope"
+text = "Fulham: £18m fee, £2.8m annual wage, 4 years."
+[question.expected]
+club_id = 931
+fee = 18.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 2.8
+contract_years = 4.0
+
+[[question]]
+id = "Q14"
+kind = "in_scope"
+text = "Crystal Palace would spend €20m on a forward, £2.5m a year, 4-year deal."
+[question.expected]
+club_id = 873
+fee = 20.0
+fee_currency = "EUR"
+annual_wage_gbp_m = 2.5
+contract_years = 4.0
+
+[[question]]
+id = "Q15"
+kind = "in_scope"
+text = "Bournemouth sign a player for £22m with £3.2m a year over 5 years and a £1.5m agent fee."
+[question.expected]
+club_id = 989
+fee = 22.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 3.2
+contract_years = 5.0
+agent_fee_gbp_m = 1.5
+
+[[question]]
+id = "Q16"
+kind = "in_scope"
+text = "Leeds United: £10m, £1.8m a year, 3 years."
+[question.expected]
+club_id = 399
+fee = 10.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 1.8
+contract_years = 3.0
+
+[[question]]
+id = "Q17"
+kind = "in_scope"
+text = "Sunderland want a €12m player on £1.5m a year for 4 years."
+[question.expected]
+club_id = 289
+fee = 12.0
+fee_currency = "EUR"
+annual_wage_gbp_m = 1.5
+contract_years = 4.0
+
+[[question]]
+id = "Q18"
+kind = "in_scope"
+text = "Can Tottenham Hotspur add a £5m player on £1m a year, 2-year contract?"
+[question.expected]
+club_id = 148
+fee = 5.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 1.0
+contract_years = 2.0
+
+[[question]]
+id = "Q19"
+kind = "in_scope"
+text = "Arsenal: £90m, £12m a year, five years."
+[question.expected]
+club_id = 11
+fee = 90.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 12.0
+contract_years = 5.0
+
+[[question]]
+id = "Q20"
+kind = "in_scope"
+text = "Brentford FC: €8m fee, £1.2m per year, 3 years."
+[question.expected]
+club_id = 1148
+fee = 8.0
+fee_currency = "EUR"
+annual_wage_gbp_m = 1.2
+contract_years = 3.0
+
+[[question]]
+id = "Q21"
+kind = "in_scope"
+text = "Man City buying a £40m defender on a 4-year contract at £6m a year, agent fee £2m."
+[question.expected]
+club_id = 281
+fee = 40.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 6.0
+contract_years = 4.0
+agent_fee_gbp_m = 2.0
+
+[[question]]
+id = "Q22"
+kind = "in_scope"
+text = "Newcastle: €45m, £5m per year, 5-year contract."
+[question.expected]
+club_id = 762
+fee = 45.0
+fee_currency = "EUR"
+annual_wage_gbp_m = 5.0
+contract_years = 5.0
+
+[[question]]
+id = "O01"
+kind = "out_of_scope"
+type = "unknown_club"
+text = "Real Madrid want to sign a player for £50m on £8m a year for 5 years. What is their SCR?"
+
+[[question]]
+id = "O02"
+kind = "out_of_scope"
+type = "ineligible_club"
+text = "Wolves: £15m fee, £2m a year, 4 years. What is the SCR impact?"
+
+[[question]]
+id = "O03"
+kind = "out_of_scope"
+type = "real_world_conclusion"
+text = "Will Chelsea get a points deduction this season?"
+
+[[question]]
+id = "O04"
+kind = "out_of_scope"
+type = "real_world_conclusion"
+text = "Is Manchester United going to break the Premier League spending rules in 2026/27?"
+
+[[question]]
+id = "O05"
+kind = "out_of_scope"
+type = "loan"
+text = "Arsenal want to take a player on a season-long loan with £3m wages. What is the SCR effect?"
+
+[[question]]
+id = "O06"
+kind = "out_of_scope"
+type = "loan"
+text = "Can Everton afford a loan with an option to buy, a £2m loan fee and £1.5m wages?"
+
+[[question]]
+id = "O07"
+kind = "out_of_scope"
+type = "other_season"
+text = "What would a £30m signing on £4m a year for 4 years do to Chelsea's SCR in 2027/28?"
+
+[[question]]
+id = "O08"
+kind = "out_of_scope"
+type = "other_season"
+text = "For the 2025/26 season, check Fulham buying a £10m player on £2m a year for 3 years."
+
+[[pilot]]
+id = "P01"
+kind = "in_scope"
+text = "Everton want a £25m centre-back on £3.5m a year over 5 years. What happens to their SCR?"
+[pilot.expected]
+club_id = 29
+fee = 25.0
+fee_currency = "GBP"
+annual_wage_gbp_m = 3.5
+contract_years = 5.0
+
+[[pilot]]
+id = "P02"
+kind = "in_scope"
+text = "Aston Villa: €40m fee, £5m a year, four-year contract."
+[pilot.expected]
+club_id = 405
+fee = 40.0
+fee_currency = "EUR"
+annual_wage_gbp_m = 5.0
+contract_years = 4.0
+
+[[pilot]]
+id = "P03"
+kind = "out_of_scope"
+type = "unknown_club"
+text = "Ajax want to sign a £20m player on £2m a year for 4 years. What is their SCR?"
+
+[[pilot]]
+id = "P04"
+kind = "out_of_scope"
+type = "loan"
+text = "Brentford want a player on loan for the season, paying £1m in wages. What is the SCR impact?"
