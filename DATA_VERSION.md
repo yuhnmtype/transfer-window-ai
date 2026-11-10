@@ -67,3 +67,10 @@ by more than 4 (Liverpool, West Ham, Newcastle, Everton, Crystal Palace, Wolves)
   `513a5d09e09a7911e697cea9071f8e87`) and sources table (MD5 `e6ae8d8a37687d6e6b3659da93610071`)
   are recoverable from git history at the commit before this change. Details:
   `docs/finance_verification.md`.
+- 2026-11-10: database reloaded with `python src/phase2_load_seed.py`. Only the `notes` cells of
+  the four rows above changed in `club_finance`; all other tables are identical (row counts and
+  content hashes compared before and after). The database MD5 recorded as `md5_db_file` in
+  `results/fee_model_eval.json` (`2e2020e8c590c8f2a4c8c438411c9583`) refers to an earlier
+  database: it already differed from the database before this reload
+  (`d4fff6e54d073bca2c6501899372dab4`, after the reload `62acf6deb0995d30f705c983f11642dc`),
+  and nothing reads it back.
